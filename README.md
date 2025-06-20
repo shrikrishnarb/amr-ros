@@ -135,14 +135,17 @@ $ sudo gpasswd -a $USER docker
 Please log out and log back in to reflect the group addition. Try running it again and 
 make sure it can be run without logging in .docker ps sudo docker
 
-###Build and Run the Docker Container
+### Build and Run the Docker Container
+
 From the docker/ directory, build your Docker image:
+
 ```bash
 cd docker
 docker build -t amr-ros-dev .
 ```
 
 Run the container interactively:
+
 ```bash
 docker run -it --rm --name amr-dev \
     --net=host \
