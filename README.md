@@ -129,18 +129,23 @@ CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 
 You can run sudo without adding the account to the docker group docker. To add the account to the docker group, run the following command.
 ```bash
-$ sudo gpasswd -a $USER docker
+sudo gpasswd -a $USER docker
 ```
 
 Please log out and log back in to reflect the group addition. Try running it again and 
 make sure it can be run without logging in .docker ps sudo docker
+
+### Clone the repository from GitHub
+```bash
+git clone https://github.com/shrikrishnarb/amr-ros.git
+```
 
 ### Build and Run the Docker Container
 
 From the docker/ directory, build your Docker image:
 
 ```bash
-cd docker
+cd amr-ros/docker
 docker build -t amr-ros-dev .
 ```
 
@@ -167,5 +172,6 @@ ign gazebo --version
 You should see:
 
 humble
-
 Gazebo Sim, version 6.17.0
+Copyright (C) 2018 Open Source Robotics Foundation.
+Released under the Apache 2.0 License.
