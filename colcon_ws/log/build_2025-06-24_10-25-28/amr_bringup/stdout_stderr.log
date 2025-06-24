@@ -1,0 +1,15 @@
+running egg_info
+writing ../../build/amr_bringup/amr_bringup.egg-info/PKG-INFO
+writing dependency_links to ../../build/amr_bringup/amr_bringup.egg-info/dependency_links.txt
+writing entry points to ../../build/amr_bringup/amr_bringup.egg-info/entry_points.txt
+writing requirements to ../../build/amr_bringup/amr_bringup.egg-info/requires.txt
+writing top-level names to ../../build/amr_bringup/amr_bringup.egg-info/top_level.txt
+reading manifest file '../../build/amr_bringup/amr_bringup.egg-info/SOURCES.txt'
+writing manifest file '../../build/amr_bringup/amr_bringup.egg-info/SOURCES.txt'
+running build
+running build_py
+running install
+running install_lib
+running install_data
+creating /workspace/colcon_ws/install/amr_bringup/share/amr_bringup/launch
+error: can't copy 'launch/talker_listener.launch.py': doesn't exist or not a regular file

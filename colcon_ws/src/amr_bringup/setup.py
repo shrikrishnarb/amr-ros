@@ -1,4 +1,6 @@
 from setuptools import setup
+import os
+from glob import glob
 
 package_name = 'amr_bringup'
 
@@ -8,6 +10,7 @@ setup(
     packages=[package_name],
     data_files=[
         ('share/' + package_name, ['package.xml']),
+        ('share/' + package_name + '/launch', ['launch/talker_listener.launch.py']),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -19,6 +22,7 @@ setup(
     entry_points={
         'console_scripts': [
             'talker = amr_bringup.talker:main',
+            'listener = amr_bringup.listener:main',
         ],
     },
 )
