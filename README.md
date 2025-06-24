@@ -31,11 +31,11 @@ This project builds a simulated Autonomous Mobile Robot (AMR) in Gazebo using RO
 ---
 
 ## Directory Structure
-amr-ros/
-├── docker/ # Docker & compose files
-├── docs/ # Documentation & architecture
-├── media/ # Screenshots, videos
-├── src/ # ROS2 workspace
+amr-ros/   
+├── docker/ # Docker & compose files   
+├── docs/ # Documentation & architecture   
+├── media/ # Screenshots, videos   
+├── src/ # ROS2 workspace   
 
 ---
 
@@ -171,7 +171,7 @@ ign gazebo --version
 
 You should see:
 
-humble
-Gazebo Sim, version 6.17.0
-Copyright (C) 2018 Open Source Robotics Foundation.
-Released under the Apache 2.0 License.
+humble  
+Gazebo Sim, version 6.17.0  
+Copyright (C) 2018 Open Source Robotics Foundation.  
+Released under the Apache 2.0 License.  
