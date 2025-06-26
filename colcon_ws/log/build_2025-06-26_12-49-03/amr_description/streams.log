@@ -1,0 +1,39 @@
+[0.620s] Invoking command in '/workspace/colcon_ws/src/amr_description': PYTHONPATH=/workspace/colcon_ws/build/amr_description/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/workspace/colcon_ws/install/amr_description/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/amr_description build --build-base /workspace/colcon_ws/build/amr_description/build install --record /workspace/colcon_ws/build/amr_description/install.log --single-version-externally-managed install_data
+[0.775s] running egg_info
+[0.775s] creating ../../build/amr_description/amr_description.egg-info
+[0.775s] writing ../../build/amr_description/amr_description.egg-info/PKG-INFO
+[0.775s] writing dependency_links to ../../build/amr_description/amr_description.egg-info/dependency_links.txt
+[0.775s] writing entry points to ../../build/amr_description/amr_description.egg-info/entry_points.txt
+[0.775s] writing requirements to ../../build/amr_description/amr_description.egg-info/requires.txt
+[0.775s] writing top-level names to ../../build/amr_description/amr_description.egg-info/top_level.txt
+[0.775s] writing manifest file '../../build/amr_description/amr_description.egg-info/SOURCES.txt'
+[0.776s] reading manifest file '../../build/amr_description/amr_description.egg-info/SOURCES.txt'
+[0.776s] writing manifest file '../../build/amr_description/amr_description.egg-info/SOURCES.txt'
+[0.776s] running build
+[0.776s] running build_py
+[0.777s] creating /workspace/colcon_ws/build/amr_description/build
+[0.777s] creating /workspace/colcon_ws/build/amr_description/build/lib
+[0.777s] creating /workspace/colcon_ws/build/amr_description/build/lib/amr_description
+[0.777s] copying amr_description/__init__.py -> /workspace/colcon_ws/build/amr_description/build/lib/amr_description
+[0.777s] running install
+[0.777s] running install_lib
+[0.778s] creating /workspace/colcon_ws/install/amr_description/lib/python3.10/site-packages/amr_description
+[0.778s] copying /workspace/colcon_ws/build/amr_description/build/lib/amr_description/__init__.py -> /workspace/colcon_ws/install/amr_description/lib/python3.10/site-packages/amr_description
+[0.778s] byte-compiling /workspace/colcon_ws/install/amr_description/lib/python3.10/site-packages/amr_description/__init__.py to __init__.cpython-310.pyc
+[0.779s] running install_data
+[0.779s] creating /workspace/colcon_ws/install/amr_description/share/ament_index
+[0.779s] creating /workspace/colcon_ws/install/amr_description/share/ament_index/resource_index
+[0.779s] creating /workspace/colcon_ws/install/amr_description/share/ament_index/resource_index/packages
+[0.779s] copying resource/amr_description -> /workspace/colcon_ws/install/amr_description/share/ament_index/resource_index/packages
+[0.779s] copying package.xml -> /workspace/colcon_ws/install/amr_description/share/amr_description
+[0.779s] creating /workspace/colcon_ws/install/amr_description/share/amr_description/launch
+[0.779s] copying launch/teleop.launch.py -> /workspace/colcon_ws/install/amr_description/share/amr_description/launch
+[0.780s] copying launch/display.launch.py -> /workspace/colcon_ws/install/amr_description/share/amr_description/launch
+[0.780s] creating /workspace/colcon_ws/install/amr_description/share/amr_description/urdf
+[0.780s] copying urdf/amr.urdf -> /workspace/colcon_ws/install/amr_description/share/amr_description/urdf
+[0.780s] creating /workspace/colcon_ws/install/amr_description/share/amr_description/rviz
+[0.780s] running install_egg_info
+[0.782s] Copying ../../build/amr_description/amr_description.egg-info to /workspace/colcon_ws/install/amr_description/lib/python3.10/site-packages/amr_description-0.0.0-py3.10.egg-info
+[0.783s] running install_scripts
+[0.798s] writing list of installed files to '/workspace/colcon_ws/build/amr_description/install.log'
+[0.822s] Invoked command in '/workspace/colcon_ws/src/amr_description' returned '0': PYTHONPATH=/workspace/colcon_ws/build/amr_description/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/workspace/colcon_ws/install/amr_description/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/amr_description build --build-base /workspace/colcon_ws/build/amr_description/build install --record /workspace/colcon_ws/build/amr_description/install.log --single-version-externally-managed install_data

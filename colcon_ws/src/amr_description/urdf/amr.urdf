@@ -32,21 +32,16 @@
   </link>
 
   <!-- Left Wheel -->
-  <joint name="base_to_wheel_left" type="fixed">
-    <parent link="base_link"/>
-    <child link="wheel_left"/>
-  </joint>
-
   <link name="wheel_left">
     <visual>
-      <origin xyz="-0.2 0.15 0" rpy="1.5708 1.5708 0"/>
+      <origin xyz="0 0 0" rpy="1.5708 1.5708 0"/>
       <geometry>
         <cylinder length="0.05" radius="0.1"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
-      <origin xyz="-0.2 0.15 0" rpy="1.5708 1.5708 0"/>
+      <origin xyz="0 0 0" rpy="1.5708 1.5708 0"/>
       <geometry>
         <cylinder length="0.05" radius="0.1"/>
       </geometry>
@@ -58,22 +53,24 @@
     </inertial>
   </link>
 
-  <!-- Right Wheel -->
-  <joint name="base_to_wheel_right" type="fixed">
+  <joint name="left_joint" type="continuous">
     <parent link="base_link"/>
-    <child link="wheel_right"/>
+    <child link="wheel_left"/>
+    <origin xyz="-0.2 0.2 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
   </joint>
 
+  <!-- Right Wheel -->
   <link name="wheel_right">
     <visual>
-      <origin xyz="-0.2 -0.15 0" rpy="1.5708 1.5708 0"/>
+      <origin xyz="0 0 0" rpy="1.5708 1.5708 0"/>
       <geometry>
         <cylinder length="0.05" radius="0.1"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
-      <origin xyz="-0.2 -0.15 0" rpy="1.5708 1.5708 0"/>
+      <origin xyz="0 0 0" rpy="1.5708 1.5708 0"/>
       <geometry>
         <cylinder length="0.05" radius="0.1"/>
       </geometry>
@@ -84,5 +81,122 @@
       <origin xyz="0 0 0" rpy="0 0 0"/>
     </inertial>
   </link>
+
+  <joint name="right_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="wheel_right"/>
+    <origin xyz="-0.2 -0.2 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <!-- LIDAR -->
+  <link name="lidar_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.05"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+  </link>
+
+  <joint name="base_to_lidar" type="fixed">
+    <parent link="base_link"/>
+    <child link="lidar_link"/>
+    <origin xyz="0 0 0.125" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Transmissions -->
+  <transmission name="left_wheel_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="left_joint">
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="left_wheel_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="right_wheel_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="right_joint">
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="right_wheel_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <!-- Gazebo Plugins -->
+  <gazebo reference="left_joint">
+    <axis>0 1 0</axis>
+    <limit>
+      <velocity>10</velocity>
+      <effort>10</effort>
+    </limit>
+  </gazebo>
+
+  <gazebo reference="right_joint">
+    <axis>0 1 0</axis>
+    <limit>
+      <velocity>10</velocity>
+      <effort>10</effort>
+    </limit>
+  </gazebo>
+
+  <gazebo reference="lidar_link">
+    <sensor type="ray" name="lidar_sensor">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>true</visualize>
+      <update_rate>20.0</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>720</samples>
+            <resolution>1</resolution>
+            <min_angle>-1.57</min_angle>
+            <max_angle>1.57</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.1</min>
+          <max>10.0</max>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_ray_sensor.so">
+        <ros>
+          <namespace>/</namespace>
+          <remapping>~/out:=scan</remapping>
+        </ros>
+        <topicName>/scan</topicName>
+        <output_type>sensor_msgs/LaserScan</output_type>
+        <frameName>lidar_link</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <gazebo>
+    <plugin name="diff_drive_controller" filename="libgazebo_ros_diff_drive.so">
+      <ros>
+        <namespace>/</namespace>
+      </ros>
+      <update_rate>50.0</update_rate>
+      <left_joint>left_joint</left_joint>
+      <right_joint>right_joint</right_joint>
+      <wheel_separation>0.3</wheel_separation>
+      <wheel_diameter>0.2</wheel_diameter>
+      <cmd_vel_topic>/cmd_vel</cmd_vel_topic>
+      <odometry_topic>odom</odometry_topic>
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_link</robot_base_frame>
+      <publish_tf>true</publish_tf>
+      <publish_wheel_tf>true</publish_wheel_tf>
+    </plugin>
+  </gazebo>
 
 </robot>
