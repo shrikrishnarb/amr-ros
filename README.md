@@ -175,3 +175,10 @@ humble
 Gazebo Sim, version 6.17.0  
 Copyright (C) 2018 Open Source Robotics Foundation.  
 Released under the Apache 2.0 License.  
+
+Inside the docker
+```bash
+cd /workspace/colcon_ws/
+colcon build
+source install/setup.bash
+```
