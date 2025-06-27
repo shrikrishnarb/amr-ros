@@ -1,0 +1,21 @@
+[0.558s] Invoking command in '/workspace/colcon_ws/src/amr_description': PYTHONPATH=/workspace/colcon_ws/build/amr_description/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/workspace/colcon_ws/install/amr_description/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/amr_description build --build-base /workspace/colcon_ws/build/amr_description/build install --record /workspace/colcon_ws/build/amr_description/install.log --single-version-externally-managed install_data
+[0.698s] running egg_info
+[0.699s] writing ../../build/amr_description/amr_description.egg-info/PKG-INFO
+[0.699s] writing dependency_links to ../../build/amr_description/amr_description.egg-info/dependency_links.txt
+[0.699s] writing entry points to ../../build/amr_description/amr_description.egg-info/entry_points.txt
+[0.699s] writing requirements to ../../build/amr_description/amr_description.egg-info/requires.txt
+[0.699s] writing top-level names to ../../build/amr_description/amr_description.egg-info/top_level.txt
+[0.700s] reading manifest file '../../build/amr_description/amr_description.egg-info/SOURCES.txt'
+[0.701s] writing manifest file '../../build/amr_description/amr_description.egg-info/SOURCES.txt'
+[0.702s] running build
+[0.702s] running build_py
+[0.702s] running install
+[0.702s] running install_lib
+[0.703s] running install_data
+[0.703s] copying urdf/amr.urdf -> /workspace/colcon_ws/install/amr_description/share/amr_description/urdf
+[0.703s] running install_egg_info
+[0.705s] removing '/workspace/colcon_ws/install/amr_description/lib/python3.10/site-packages/amr_description-0.0.0-py3.10.egg-info' (and everything under it)
+[0.705s] Copying ../../build/amr_description/amr_description.egg-info to /workspace/colcon_ws/install/amr_description/lib/python3.10/site-packages/amr_description-0.0.0-py3.10.egg-info
+[0.708s] running install_scripts
+[0.719s] writing list of installed files to '/workspace/colcon_ws/build/amr_description/install.log'
+[0.745s] Invoked command in '/workspace/colcon_ws/src/amr_description' returned '0': PYTHONPATH=/workspace/colcon_ws/build/amr_description/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/workspace/colcon_ws/install/amr_description/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/amr_description build --build-base /workspace/colcon_ws/build/amr_description/build install --record /workspace/colcon_ws/build/amr_description/install.log --single-version-externally-managed install_data

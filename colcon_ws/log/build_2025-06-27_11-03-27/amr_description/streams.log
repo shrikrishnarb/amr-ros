@@ -1,0 +1,17 @@
+[0.525s] Invoking command in '/workspace/colcon_ws/src/amr_description': PYTHONPATH=/workspace/colcon_ws/build/amr_description/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/workspace/colcon_ws/install/amr_description/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/amr_description build --build-base /workspace/colcon_ws/build/amr_description/build install --record /workspace/colcon_ws/build/amr_description/install.log --single-version-externally-managed install_data
+[0.677s] running egg_info
+[0.678s] writing ../../build/amr_description/amr_description.egg-info/PKG-INFO
+[0.678s] writing dependency_links to ../../build/amr_description/amr_description.egg-info/dependency_links.txt
+[0.678s] writing entry points to ../../build/amr_description/amr_description.egg-info/entry_points.txt
+[0.678s] writing requirements to ../../build/amr_description/amr_description.egg-info/requires.txt
+[0.678s] writing top-level names to ../../build/amr_description/amr_description.egg-info/top_level.txt
+[0.679s] reading manifest file '../../build/amr_description/amr_description.egg-info/SOURCES.txt'
+[0.680s] writing manifest file '../../build/amr_description/amr_description.egg-info/SOURCES.txt'
+[0.680s] running build
+[0.680s] running build_py
+[0.680s] running install
+[0.680s] running install_lib
+[0.682s] running install_data
+[0.682s] copying urdf/amr.urdf -> /workspace/colcon_ws/install/amr_description/share/amr_description/urdf
+[0.682s] error: can't copy 'urdf/log': doesn't exist or not a regular file
+[0.696s] Invoked command in '/workspace/colcon_ws/src/amr_description' returned '1': PYTHONPATH=/workspace/colcon_ws/build/amr_description/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/workspace/colcon_ws/install/amr_description/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/amr_description build --build-base /workspace/colcon_ws/build/amr_description/build install --record /workspace/colcon_ws/build/amr_description/install.log --single-version-externally-managed install_data
