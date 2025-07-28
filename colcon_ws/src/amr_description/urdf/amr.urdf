@@ -7,9 +7,18 @@
   <material name="blue"><color rgba="0.2 0.2 1 1"/></material>
   <material name="black"><color rgba="0 0 0 1"/></material>
 
+  <!-- Base Footprint Link -->
+  <link name="base_footprint"/>
+
   <!-- Base Link -->
-  <link name="base_link">
-  </link>
+  <link name="base_link"/>
+
+  <!-- Joint to connect base_footprint to base_link -->
+  <joint name="base_footprint_to_base_link" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
 
   <!-- Chassis -->
   <link name="chassis">
@@ -115,9 +124,9 @@
   </link>
 
   <joint name="base_to_lidar" type="fixed">
-    <parent link="chassis"/>
+    <parent link="base_link"/>
     <child link="lidar_link"/>
-    <origin xyz="0.24 0 0.173" rpy="0 0 0"/>
+    <origin xyz="0.14 0 0.173" rpy="0 0 0"/>
   </joint>
 
   <!-- Gazebo Elements -->
@@ -187,7 +196,7 @@
       <command_topic>/cmd_vel</command_topic>
       <odometry_topic>odom</odometry_topic>
       <odometry_frame>odom</odometry_frame>
-      <robot_base_frame>base_link</robot_base_frame>
+      <robot_base_frame>base_footprint</robot_base_frame>
       <publish_odom>true</publish_odom>
       <publish_tf>true</publish_tf>
       <publish_odom_tf>true</publish_odom_tf>

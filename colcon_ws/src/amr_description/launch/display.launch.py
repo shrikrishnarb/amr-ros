@@ -5,24 +5,23 @@ from launch_ros.actions import Node
 from launch.substitutions import PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 import os
+from launch.substitutions import Command, TextSubstitution
 
 def generate_launch_description():
     pkg_amr = FindPackageShare('amr_description')
-    
+
     urdf_path = PathJoinSubstitution([
         pkg_amr, 'urdf', 'amr.urdf'
     ])
-    
+
     rviz_config_path = PathJoinSubstitution([
         pkg_amr, 'rviz', 'amr_config.rviz'
     ])
 
-    # Read the URDF contents
-    robot_description_config = os.path.join(
-        os.path.dirname(__file__), '..', 'urdf', 'amr.urdf'
-    )
-    with open(robot_description_config, 'r') as urdf_file:
-        robot_desc = urdf_file.read()
+    robot_desc = Command([
+        TextSubstitution(text='cat '),
+        urdf_path
+    ])
 
     return LaunchDescription([
         # Start Gazebo
@@ -42,7 +41,10 @@ def generate_launch_description():
             executable='robot_state_publisher',
             name='robot_state_publisher',
             output='screen',
-            parameters=[{'robot_description': robot_desc}]
+            parameters=[
+                {'robot_description': robot_desc},
+                {'use_sim_time': True}
+            ]
         ),
 
         # RViz2
@@ -51,7 +53,8 @@ def generate_launch_description():
             executable='rviz2',
             name='rviz2',
             output='screen',
-            arguments=['-d', rviz_config_path]
+            arguments=['-d', rviz_config_path],
+            parameters=[{'use_sim_time': True}]
         ),
 
         # Spawn the robot in Gazebo
