@@ -1,0 +1,22 @@
+[3.465s] Invoking command in '/home/r-bansode/amr-ros/colcon_ws/src/amr_bringup': PYTHONPATH=/home/r-bansode/amr-ros/colcon_ws/build/amr_bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/r-bansode/amr-ros/colcon_ws/install/amr_bringup/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/amr_bringup build --build-base /home/r-bansode/amr-ros/colcon_ws/build/amr_bringup/build install --record /home/r-bansode/amr-ros/colcon_ws/build/amr_bringup/install.log --single-version-externally-managed install_data
+[4.092s] running egg_info
+[4.094s] writing ../../build/amr_bringup/amr_bringup.egg-info/PKG-INFO
+[4.095s] writing dependency_links to ../../build/amr_bringup/amr_bringup.egg-info/dependency_links.txt
+[4.095s] writing entry points to ../../build/amr_bringup/amr_bringup.egg-info/entry_points.txt
+[4.096s] writing requirements to ../../build/amr_bringup/amr_bringup.egg-info/requires.txt
+[4.097s] writing top-level names to ../../build/amr_bringup/amr_bringup.egg-info/top_level.txt
+[4.100s] reading manifest file '../../build/amr_bringup/amr_bringup.egg-info/SOURCES.txt'
+[4.115s] writing manifest file '../../build/amr_bringup/amr_bringup.egg-info/SOURCES.txt'
+[4.182s] running build
+[4.183s] running build_py
+[4.183s] running install
+[4.183s] running install_lib
+[4.183s] running install_data
+[4.183s] running install_egg_info
+[4.186s] removing '/home/r-bansode/amr-ros/colcon_ws/install/amr_bringup/lib/python3.10/site-packages/amr_bringup-0.0.0-py3.10.egg-info' (and everything under it)
+[4.186s] Copying ../../build/amr_bringup/amr_bringup.egg-info to /home/r-bansode/amr-ros/colcon_ws/install/amr_bringup/lib/python3.10/site-packages/amr_bringup-0.0.0-py3.10.egg-info
+[4.186s] running install_scripts
+[4.248s] Installing listener script to /home/r-bansode/amr-ros/colcon_ws/install/amr_bringup/lib/amr_bringup
+[4.254s] Installing talker script to /home/r-bansode/amr-ros/colcon_ws/install/amr_bringup/lib/amr_bringup
+[4.254s] writing list of installed files to '/home/r-bansode/amr-ros/colcon_ws/build/amr_bringup/install.log'
+[4.379s] Invoked command in '/home/r-bansode/amr-ros/colcon_ws/src/amr_bringup' returned '0': PYTHONPATH=/home/r-bansode/amr-ros/colcon_ws/build/amr_bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/r-bansode/amr-ros/colcon_ws/install/amr_bringup/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/amr_bringup build --build-base /home/r-bansode/amr-ros/colcon_ws/build/amr_bringup/build install --record /home/r-bansode/amr-ros/colcon_ws/build/amr_bringup/install.log --single-version-externally-managed install_data
