@@ -146,21 +146,28 @@
 
   <gazebo reference="lidar_link">
     <sensor type="ray" name="lidar_sensor">
-      <pose>0 0 0 0 0 0</pose>
+      <update_rate>10</update_rate>
+      <pose>0.14 0 0.173 0 0 0</pose>
       <visualize>true</visualize>
-      <update_rate>20.0</update_rate>
       <ray>
         <scan>
           <horizontal>
             <samples>720</samples>
             <resolution>1</resolution>
-            <min_angle>-1.57</min_angle>
-            <max_angle>1.57</max_angle>
+            <min_angle>-1.5708</min_angle>  <!-- -90 degrees -->
+            <max_angle>1.5708</max_angle>   <!-- 90 degrees -->
           </horizontal>
+          <vertical>
+            <samples>16</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.2618</min_angle>  <!-- -15 degrees -->
+            <max_angle>0.2618</max_angle>   <!-- 15 degrees -->
+          </vertical>
         </scan>
         <range>
           <min>0.1</min>
-          <max>10.0</max>
+          <max>30.0</max>
+          <resolution>0.01</resolution>
         </range>
         <noise>
           <type>gaussian</type>
@@ -168,13 +175,11 @@
           <stddev>0.01</stddev>
         </noise>
       </ray>
-      <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_ray_sensor.so">
+      <plugin name="gazebo_ros_laser" filename="libgazebo_ros_ray_sensor.so">
         <ros>
           <namespace>/</namespace>
-          <remapping>~/out:=scan</remapping>
+          <remapping>~/out:=/points</remapping>
         </ros>
-        <topicName>/scan</topicName>
-        <output_type>sensor_msgs/LaserScan</output_type>
         <frameName>lidar_link</frameName>
       </plugin>
     </sensor>
