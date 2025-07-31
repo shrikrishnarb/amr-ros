@@ -25,6 +25,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'odom_sim_filter = amr_description.odom_sim_filter:main',
         ],
     },
 )

@@ -35,6 +35,18 @@ def generate_launch_description():
             ])
         ),
 
+        Node(
+            package='amr_description',
+            executable='odom_sim_filter',
+            name='odom_sim_filter',
+            output='screen',
+            emulate_tty=True,
+            arguments=['--ros-args', '--log-level', 'info'],
+            parameters=[
+                {'use_sim_time': True}
+            ],
+        ),
+
         # Robot State Publisher
         Node(
             package='robot_state_publisher',
@@ -43,7 +55,8 @@ def generate_launch_description():
             output='screen',
             parameters=[
                 {'robot_description': robot_desc},
-                {'use_sim_time': True}
+                {'use_sim_time': True},
+                {'frame_prefix': 'agv1/'}
             ]
         ),
 
