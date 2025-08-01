@@ -43,7 +43,9 @@ def generate_launch_description():
             emulate_tty=True,
             arguments=['--ros-args', '--log-level', 'info'],
             parameters=[
-                {'use_sim_time': True}
+                {'use_sim_time': True},
+                {'odom_frame': 'agv1/odom'},
+                {'base_frame': 'agv1/base_footprint'}
             ],
         ),
 

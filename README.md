@@ -35,7 +35,7 @@ amr-ros/
 ├── docker/ # Docker & compose files   
 ├── docs/ # Documentation & architecture   
 ├── media/ # Screenshots, videos   
-├── src/ # ROS2 workspace   
+├── colcon_ws/ # ROS2 workspace   
 
 ---
 
