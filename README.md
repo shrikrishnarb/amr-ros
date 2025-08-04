@@ -32,10 +32,10 @@ This project builds a simulated Autonomous Mobile Robot (AMR) in Gazebo using RO
 
 ## Directory Structure
 amr-ros/   
-├── docker/ # Docker & compose files   
-├── docs/ # Documentation & architecture   
-├── media/ # Screenshots, videos   
-├── colcon_ws/ # ROS2 workspace   
+├── docker/  # Docker & compose files   
+├── docs/  # Documentation & architecture   
+├── media/  # Screenshots, videos   
+├── colcon_ws/  # ROS2 workspace   
 
 ---
 
