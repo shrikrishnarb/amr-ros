@@ -45,8 +45,8 @@ class OdomSimFilter(Node):
     self.get_logger().info("odom_sim_filter is running")
 
     # Parameter
-    self.odom_frame = self.declare_parameter("odom_frame", "agv1/odom").value
-    self.base_frame = self.declare_parameter("base_frame", "agv1/base_footprint").value
+    self.odom_frame = self.declare_parameter("odom_frame", "odom").value
+    self.base_frame = self.declare_parameter("base_frame", "base_footprint").value
     self.odom_jump_threshold = self.declare_parameter("odom_jump_threshold", 1.0).value
 
     # Publisher
