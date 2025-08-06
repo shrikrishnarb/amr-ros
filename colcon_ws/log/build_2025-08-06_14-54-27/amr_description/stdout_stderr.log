@@ -1,0 +1,25 @@
+running egg_info
+writing ../../build/amr_description/amr_description.egg-info/PKG-INFO
+writing dependency_links to ../../build/amr_description/amr_description.egg-info/dependency_links.txt
+writing entry points to ../../build/amr_description/amr_description.egg-info/entry_points.txt
+writing requirements to ../../build/amr_description/amr_description.egg-info/requires.txt
+writing top-level names to ../../build/amr_description/amr_description.egg-info/top_level.txt
+reading manifest file '../../build/amr_description/amr_description.egg-info/SOURCES.txt'
+writing manifest file '../../build/amr_description/amr_description.egg-info/SOURCES.txt'
+running build
+running build_py
+copying amr_description/odom_sim_filter.py -> /home/r-bansode/amr-ros/colcon_ws/build/amr_description/build/lib/amr_description
+running install
+running install_lib
+copying /home/r-bansode/amr-ros/colcon_ws/build/amr_description/build/lib/amr_description/odom_sim_filter.py -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/python3.10/site-packages/amr_description
+byte-compiling /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/python3.10/site-packages/amr_description/odom_sim_filter.py to odom_sim_filter.cpython-310.pyc
+running install_data
+copying launch/display.launch.py -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/launch
+copying launch/spawn_agv.launch.py -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/launch
+copying urdf/amr.urdf.xacro -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/urdf
+running install_egg_info
+removing '/home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/python3.10/site-packages/amr_description-0.0.0-py3.10.egg-info' (and everything under it)
+Copying ../../build/amr_description/amr_description.egg-info to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/python3.10/site-packages/amr_description-0.0.0-py3.10.egg-info
+running install_scripts
+Installing odom_sim_filter script to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/amr_description
+writing list of installed files to '/home/r-bansode/amr-ros/colcon_ws/build/amr_description/install.log'

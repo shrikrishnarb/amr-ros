@@ -1,0 +1,27 @@
+[1.054s] Invoking command in '/home/r-bansode/amr-ros/colcon_ws/src/amr_description': PYTHONPATH=/home/r-bansode/amr-ros/colcon_ws/build/amr_description/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/amr_description build --build-base /home/r-bansode/amr-ros/colcon_ws/build/amr_description/build install --record /home/r-bansode/amr-ros/colcon_ws/build/amr_description/install.log --single-version-externally-managed install_data
+[1.295s] running egg_info
+[1.295s] writing ../../build/amr_description/amr_description.egg-info/PKG-INFO
+[1.306s] writing dependency_links to ../../build/amr_description/amr_description.egg-info/dependency_links.txt
+[1.306s] writing entry points to ../../build/amr_description/amr_description.egg-info/entry_points.txt
+[1.306s] writing requirements to ../../build/amr_description/amr_description.egg-info/requires.txt
+[1.306s] writing top-level names to ../../build/amr_description/amr_description.egg-info/top_level.txt
+[1.309s] reading manifest file '../../build/amr_description/amr_description.egg-info/SOURCES.txt'
+[1.310s] writing manifest file '../../build/amr_description/amr_description.egg-info/SOURCES.txt'
+[1.310s] running build
+[1.310s] running build_py
+[1.313s] copying amr_description/odom_sim_filter.py -> /home/r-bansode/amr-ros/colcon_ws/build/amr_description/build/lib/amr_description
+[1.313s] running install
+[1.313s] running install_lib
+[1.314s] copying /home/r-bansode/amr-ros/colcon_ws/build/amr_description/build/lib/amr_description/odom_sim_filter.py -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/python3.10/site-packages/amr_description
+[1.316s] byte-compiling /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/python3.10/site-packages/amr_description/odom_sim_filter.py to odom_sim_filter.cpython-310.pyc
+[1.317s] running install_data
+[1.319s] copying launch/display.launch.py -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/launch
+[1.320s] copying launch/spawn_agv.launch.py -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/launch
+[1.321s] copying urdf/amr.urdf.xacro -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/urdf
+[1.322s] running install_egg_info
+[1.323s] removing '/home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/python3.10/site-packages/amr_description-0.0.0-py3.10.egg-info' (and everything under it)
+[1.323s] Copying ../../build/amr_description/amr_description.egg-info to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/python3.10/site-packages/amr_description-0.0.0-py3.10.egg-info
+[1.324s] running install_scripts
+[1.345s] Installing odom_sim_filter script to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/amr_description
+[1.347s] writing list of installed files to '/home/r-bansode/amr-ros/colcon_ws/build/amr_description/install.log'
+[1.370s] Invoked command in '/home/r-bansode/amr-ros/colcon_ws/src/amr_description' returned '0': PYTHONPATH=/home/r-bansode/amr-ros/colcon_ws/build/amr_description/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/amr_description build --build-base /home/r-bansode/amr-ros/colcon_ws/build/amr_description/build install --record /home/r-bansode/amr-ros/colcon_ws/build/amr_description/install.log --single-version-externally-managed install_data

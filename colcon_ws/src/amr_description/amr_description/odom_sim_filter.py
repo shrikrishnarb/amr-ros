@@ -28,12 +28,19 @@ def quaternion_sub(lhs: np.ndarray, rhs: np.ndarray) -> np.ndarray:
   return np.array(quaternion_multiply(lhs, quaternion_inverse(rhs)))
 
 
-class OdomSimFilter(Node):
+class OdomSimFilter_2(Node):
   """Overwrite odometry by the calculated twist and pose relative to virtual origin."""
 
   def __init__(self):
     """Init."""
-    super().__init__("odom_sim_filter")
+    super().__init__("odom_sim_filter_2")
+    # Declare the robot_namespace parameter
+    self.declare_parameter('robot_namespace', 'default_namespace')
+    # Get the robot_namespace parameter value
+    self.robot_namespace = self.get_parameter('robot_namespace').get_parameter_value().string_value
+
+    # Log the namespace to check the value
+    self.get_logger().info(f"Robot namespace is: {self.robot_namespace}")
 
     # Instance attribute
     self.latest_timestamp: float = -1.0
@@ -42,27 +49,26 @@ class OdomSimFilter(Node):
     self.origin_position: np.ndarray = np.array([0.0, 0.0, 0.0])
     self.origin_orientation: np.ndarray = np.array([0.0, 0.0, 0.0, 1.0])
     self.origin_rotation_matrix: np.ndarray = np.eye(4, 4)
-    self.get_logger().info("odom_sim_filter is running")
 
     # Parameter
-    self.odom_frame = self.declare_parameter("odom_frame", "odom").value
-    self.base_frame = self.declare_parameter("base_frame", "base_footprint").value
+    self.odom_frame = self.declare_parameter("odom_frame", f"{self.robot_namespace}/odom").value
+    self.base_frame = self.declare_parameter("base_frame", f"{self.robot_namespace}/base_footprint").value
     self.odom_jump_threshold = self.declare_parameter("odom_jump_threshold", 1.0).value
 
     # Publisher
-    self.odom_pub = self.create_publisher(Odometry, "/diff_drive_controller/odom", 10)
-    self.tf_broadcaster = TransformBroadcaster(self, 30)
+    self.odom_pub = self.create_publisher(Odometry, f"/{self.robot_namespace}/diff_drive_controller/odom", 10)
+    self.tf_broadcaster = TransformBroadcaster(self)
 
     # Subscriber
-    self.odom_sub = self.create_subscription(Odometry, "/odom", self.odom_cb, 10)
+    self.odom_sub = self.create_subscription(Odometry, f"/{self.robot_namespace}/odom", self.odom_cb, 10)
 
     # Service
     self.reset_odometry_sub = self.create_service(
-      Empty, "/diff_drive_controller/reset_odometry", self.reset_odometry_cb
+      Empty, f"/{self.robot_namespace}/diff_drive_controller/reset_odometry", self.reset_odometry_cb
     )
 
   def odom_cb(self, msg: Odometry):
-    """Callback for /diff_drive_controller/odom."""
+    """Callback for /{self.robot_namespace}/diff_drive_controller/odom."""
     if self.latest_timestamp < 0.0:
       # This is the first message. Start calculation from next message.
       self.latest_timestamp = Time.from_msg(msg.header.stamp).nanoseconds * 1e-9
@@ -107,13 +113,12 @@ class OdomSimFilter(Node):
       odom_to_base.transform.rotation = filtered_msg.pose.pose.orientation
       self.tf_broadcaster.sendTransform(odom_to_base)
 
-
     self.latest_timestamp = current_timestamp
     self.latest_position = current_position
     self.latest_orientation = current_orientation
 
   def reset_odometry_cb(self, req: Empty.Request, res: Empty.Response) -> Empty.Response:
-    """Callback for /diff_drive_controller/reset_odometry."""
+    """Callback for /{self.robot_namespace}/diff_drive_controller/reset_odometry."""
     if self.latest_timestamp >= 0:
       self.origin_position = self.latest_position
       self.origin_orientation = self.latest_orientation
@@ -138,18 +143,12 @@ class OdomSimFilter(Node):
     twist.linear.x = lin_x_sign * np.linalg.norm(pos_diff) / dt
     quat_diff = quaternion_sub(current_orientation, latest_orientation)
     twist.angular.z = euler_from_quaternion(quat_diff)[2] / dt
-    # AGV position slightly changes in Gazebo and it causes estimation drift
-    # Round to zero if the moving speed is lower than 1mm/s
-    if abs(twist.linear.x) < 1e-3:
-      twist.linear.x = 0.
-    if abs(twist.angular.z) < 1e-3:
-      twist.angular.z = 0.
     return twist
 
 
 def main(args=None):
   rclpy.init(args=args)
-  node = OdomSimFilter()
+  node = OdomSimFilter_2()
   rclpy.spin(node)
 
 
