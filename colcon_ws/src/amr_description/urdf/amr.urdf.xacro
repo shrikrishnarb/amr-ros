@@ -1,5 +1,8 @@
 <?xml version="1.0"?>
-<robot xmlns="http://www.ros.org/schema" name="amr_bot">
+<robot xmlns:xacro="http://ros.org/wiki/xacro" xmlns="http://www.ros.org/schema" name="amr_bot">
+
+  <!-- Namespace argument -->
+  <xacro:arg name="namespace" default="agv1"/>
 
   <!-- Materials -->
   <material name="white"><color rgba="1 1 1 1"/></material>
@@ -8,20 +11,20 @@
   <material name="black"><color rgba="0 0 0 1"/></material>
 
   <!-- Base Footprint Link -->
-  <link name="base_footprint"/>
+  <link name="$(arg namespace)/base_footprint"/>
 
   <!-- Base Link -->
-  <link name="base_link"/>
+  <link name="$(arg namespace)/base_link"/>
 
   <!-- Joint to connect base_footprint to base_link -->
   <joint name="base_footprint_to_base_link" type="fixed">
-    <parent link="base_footprint"/>
-    <child link="base_link"/>
+    <parent link="$(arg namespace)/base_footprint"/>
+    <child link="$(arg namespace)/base_link"/>
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
 
   <!-- Chassis -->
-  <link name="chassis">
+  <link name="$(arg namespace)/chassis">
     <visual>
       <origin xyz="0.15 0 0.075" rpy="0 0 0"/>
       <geometry><box size="0.3 0.3 0.15"/></geometry>
@@ -39,13 +42,13 @@
   </link>
 
   <joint name="chassis_joint" type="fixed">
-    <parent link="base_link"/>
-    <child link="chassis"/>
+    <parent link="$(arg namespace)/base_link"/>
+    <child link="$(arg namespace)/chassis"/>
     <origin xyz="-0.1 0 0" rpy="0 0 0"/>
   </joint>
 
   <!-- Left Wheel -->
-  <link name="left_wheel">
+  <link name="$(arg namespace)/left_wheel">
     <visual>
       <geometry><cylinder length="0.04" radius="0.05"/></geometry>
       <material name="blue"/>
@@ -61,14 +64,14 @@
   </link>
 
   <joint name="left_wheel_joint" type="continuous">
-    <parent link="base_link"/>
-    <child link="left_wheel"/>
+    <parent link="$(arg namespace)/base_link"/>
+    <child link="$(arg namespace)/left_wheel"/>
     <origin xyz="0 0.175 0" rpy="-1.5708 0 0"/>
     <axis xyz="0 0 1"/>
   </joint>
 
   <!-- Right Wheel -->
-  <link name="right_wheel">
+  <link name="$(arg namespace)/right_wheel">
     <visual>
       <geometry><cylinder length="0.04" radius="0.05"/></geometry>
       <material name="blue"/>
@@ -84,14 +87,14 @@
   </link>
 
   <joint name="right_wheel_joint" type="continuous">
-    <parent link="base_link"/>
-    <child link="right_wheel"/>
+    <parent link="$(arg namespace)/base_link"/>
+    <child link="$(arg namespace)/right_wheel"/>
     <origin xyz="0 -0.175 0" rpy="1.5708 0 0"/>
     <axis xyz="0 0 -1"/>
   </joint>
 
   <!-- Caster Wheel -->
-  <link name="caster_wheel">
+  <link name="$(arg namespace)/caster_wheel">
     <visual>
       <geometry><sphere radius="0.05"/></geometry>
       <material name="black"/>
@@ -107,13 +110,13 @@
   </link>
 
   <joint name="caster_wheel_joint" type="fixed">
-    <parent link="chassis"/>
-    <child link="caster_wheel"/>
+    <parent link="$(arg namespace)/chassis"/>
+    <child link="$(arg namespace)/caster_wheel"/>
     <origin xyz="0.24 0 0" rpy="0 0 0"/>
   </joint>
 
   <!-- LIDAR -->
-  <link name="lidar_link">
+  <link name="$(arg namespace)/lidar_link">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
@@ -124,27 +127,27 @@
   </link>
 
   <joint name="base_to_lidar" type="fixed">
-    <parent link="base_link"/>
-    <child link="lidar_link"/>
+    <parent link="$(arg namespace)/base_link"/>
+    <child link="$(arg namespace)/lidar_link"/>
     <origin xyz="0.14 0 0.173" rpy="0 0 0"/>
   </joint>
 
   <!-- Gazebo Elements -->
-  <gazebo reference="left_wheel">
+  <gazebo reference="$(arg namespace)/left_wheel">
     <material>Gazebo/Blue</material>
   </gazebo>
 
-  <gazebo reference="right_wheel">
+  <gazebo reference="$(arg namespace)/right_wheel">
     <material>Gazebo/Blue</material>
   </gazebo>
 
-  <gazebo reference="caster_wheel">
+  <gazebo reference="$(arg namespace)/caster_wheel">
     <mu1>0.001</mu1>
     <mu2>0.001</mu2>
     <material>Gazebo/Black</material>
   </gazebo>
 
-  <gazebo reference="lidar_link">
+  <gazebo reference="$(arg namespace)/lidar_link">
     <sensor type="ray" name="lidar_sensor">
       <update_rate>10</update_rate>
       <pose>0.14 0 0.173 0 0 0</pose>
@@ -154,14 +157,14 @@
           <horizontal>
             <samples>720</samples>
             <resolution>1</resolution>
-            <min_angle>-1.5708</min_angle>  <!-- -90 degrees -->
-            <max_angle>1.5708</max_angle>   <!-- 90 degrees -->
+            <min_angle>-1.5708</min_angle>
+            <max_angle>1.5708</max_angle>
           </horizontal>
           <vertical>
             <samples>16</samples>
             <resolution>1</resolution>
-            <min_angle>-0.2618</min_angle>  <!-- -15 degrees -->
-            <max_angle>0.2618</max_angle>   <!-- 15 degrees -->
+            <min_angle>-0.2618</min_angle>
+            <max_angle>0.2618</max_angle>
           </vertical>
         </scan>
         <range>
@@ -177,7 +180,7 @@
       </ray>
       <plugin name="gazebo_ros_laser" filename="libgazebo_ros_ray_sensor.so">
         <ros>
-          <namespace>/</namespace>
+          <namespace>$(arg namespace)</namespace>
           <remapping>~/out:=/points</remapping>
         </ros>
         <frameName>lidar_link</frameName>
@@ -185,11 +188,10 @@
     </sensor>
   </gazebo>
 
-  <!-- Diff Drive Plugin -->
   <gazebo>
     <plugin name="diff_drive_controller" filename="libgazebo_ros_diff_drive.so">
       <ros>
-        <namespace>/</namespace>
+        <namespace>$(arg namespace)</namespace>
       </ros>
       <update_rate>50.0</update_rate>
       <left_joint>left_wheel_joint</left_joint>
@@ -201,7 +203,7 @@
       <command_topic>/cmd_vel</command_topic>
       <odometry_topic>odom</odometry_topic>
       <odometry_frame>odom</odometry_frame>
-      <robot_base_frame>base_footprint</robot_base_frame>
+      <robot_base_frame>base_link</robot_base_frame>
       <publish_odom>true</publish_odom>
       <publish_tf>true</publish_tf>
       <publish_odom_tf>false</publish_odom_tf>
