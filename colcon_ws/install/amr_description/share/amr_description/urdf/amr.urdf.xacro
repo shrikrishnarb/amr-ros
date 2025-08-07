@@ -160,12 +160,6 @@
             <min_angle>-1.5708</min_angle>
             <max_angle>1.5708</max_angle>
           </horizontal>
-          <vertical>
-            <samples>16</samples>
-            <resolution>1</resolution>
-            <min_angle>-0.2618</min_angle>
-            <max_angle>0.2618</max_angle>
-          </vertical>
         </scan>
         <range>
           <min>0.1</min>
@@ -178,12 +172,13 @@
           <stddev>0.01</stddev>
         </noise>
       </ray>
-      <plugin name="gazebo_ros_laser" filename="libgazebo_ros_ray_sensor.so">
+      <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_ray_sensor.so">
         <ros>
           <namespace>$(arg namespace)</namespace>
-          <remapping>~/out:=/points</remapping>
+          <remapping>~/out:=scan</remapping>
         </ros>
-        <frameName>lidar_link</frameName>
+        <output_type>sensor_msgs/LaserScan</output_type>
+        <frameName>$(arg namespace)/lidar_link</frameName>
       </plugin>
     </sensor>
   </gazebo>
@@ -201,13 +196,21 @@
       <max_wheel_acceleration>1.0</max_wheel_acceleration>
       <max_wheel_torque>200</max_wheel_torque>
       <command_topic>/cmd_vel</command_topic>
-      <odometry_topic>odom</odometry_topic>
-      <odometry_frame>odom</odometry_frame>
+      <odometry_frame>world</odometry_frame>
       <robot_base_frame>base_link</robot_base_frame>
       <publish_odom>true</publish_odom>
       <publish_tf>true</publish_tf>
       <publish_odom_tf>false</publish_odom_tf>
       <publish_wheel_tf>true</publish_wheel_tf>
+    </plugin>
+    <plugin name="ground_truth_plugin" filename="libgazebo_ros_p3d.so">
+      <ros>
+        <namespace>$(arg namespace)</namespace>
+        <remapping>odom:=ground_truth</remapping>
+      </ros>
+      <frame_name>world</frame_name>
+      <body_name>$(arg namespace)/base_footprint</body_name>
+      <update_rate>30.0</update_rate>
     </plugin>
   </gazebo>
 

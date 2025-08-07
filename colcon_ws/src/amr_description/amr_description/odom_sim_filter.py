@@ -33,7 +33,7 @@ class OdomSimFilter_2(Node):
 
   def __init__(self):
     """Init."""
-    super().__init__("odom_sim_filter_2")
+    super().__init__("odom_sim_filter")
     # Declare the robot_namespace parameter
     self.declare_parameter('robot_namespace', 'default_namespace')
     # Get the robot_namespace parameter value
