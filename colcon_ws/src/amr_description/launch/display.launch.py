@@ -4,6 +4,9 @@ from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, Comm
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+import os
+from ament_index_python.packages import get_package_share_directory
+
 
 def generate_launch_description():
     # Declare namespace argument
@@ -30,19 +33,28 @@ def generate_launch_description():
         'xacro ', xacro_file, ' namespace:=', namespace
     ])
 
+    world = os.path.join(
+        get_package_share_directory('amr_description'),
+        'worlds', 'map.world'
+    )
+
+    declare_world_fname = DeclareLaunchArgument(
+        "world_fname", default_value=world, description="absolute path of gazebo world file"
+    )
+
+    gazebo = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('gazebo_ros'), "launch", "gazebo.launch.py")
+        ),
+        launch_arguments={
+            "world": LaunchConfiguration("world_fname"),
+        }.items()
+    )
+
     return LaunchDescription([
         namespace_arg,
-
-        # Start Gazebo
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([
-                PathJoinSubstitution([
-                    FindPackageShare('gazebo_ros'),
-                    'launch',
-                    'gazebo.launch.py'
-                ])
-            ])
-        ),
+        declare_world_fname,
+        gazebo,
 
         # Simulated Odom Filter Node
         Node(

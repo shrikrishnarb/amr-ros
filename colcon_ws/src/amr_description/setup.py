@@ -4,6 +4,14 @@ import os
 
 package_name = 'amr_description'
 
+def get_data_files(directory):
+    # Recursively get all files (exclude directories)
+    paths = []
+    for root, _, files in os.walk(directory):
+        for f in files:
+            paths.append(os.path.join(root, f))
+    return paths
+
 setup(
     name=package_name,
     version='0.0.0',
@@ -15,6 +23,7 @@ setup(
         (os.path.join('share', package_name, 'launch'), glob('launch/*.launch.py')),
         (os.path.join('share', package_name, 'urdf'), glob('urdf/*')),
         (os.path.join('share', package_name, 'rviz'), glob('rviz/*')),
+        (os.path.join('share', package_name, 'worlds'), get_data_files('worlds')),
     ],
     install_requires=['setuptools', 'numpy'],
     zip_safe=True,
