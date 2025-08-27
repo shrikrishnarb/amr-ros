@@ -1,0 +1,25 @@
+[0.898s] Invoking command in '/home/r-bansode/amr-ros/colcon_ws/src/amr_description': PYTHONPATH=/home/r-bansode/amr-ros/colcon_ws/build/amr_description/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/amr_description build --build-base /home/r-bansode/amr-ros/colcon_ws/build/amr_description/build install --record /home/r-bansode/amr-ros/colcon_ws/build/amr_description/install.log --single-version-externally-managed install_data
+[1.086s] running egg_info
+[1.087s] writing ../../build/amr_description/amr_description.egg-info/PKG-INFO
+[1.087s] writing dependency_links to ../../build/amr_description/amr_description.egg-info/dependency_links.txt
+[1.087s] writing entry points to ../../build/amr_description/amr_description.egg-info/entry_points.txt
+[1.087s] writing requirements to ../../build/amr_description/amr_description.egg-info/requires.txt
+[1.087s] writing top-level names to ../../build/amr_description/amr_description.egg-info/top_level.txt
+[1.093s] reading manifest file '../../build/amr_description/amr_description.egg-info/SOURCES.txt'
+[1.093s] writing manifest file '../../build/amr_description/amr_description.egg-info/SOURCES.txt'
+[1.093s] running build
+[1.093s] running build_py
+[1.093s] running install
+[1.093s] running install_lib
+[1.093s] running install_data
+[1.093s] copying launch/display.launch.py -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/launch
+[1.093s] running install_egg_info
+[1.109s] removing '/home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/python3.10/site-packages/amr_description-0.0.0-py3.10.egg-info' (and everything under it)
+[1.111s] Copying ../../build/amr_description/amr_description.egg-info to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/python3.10/site-packages/amr_description-0.0.0-py3.10.egg-info
+[1.111s] running install_scripts
+[1.119s] Installing battery_sim script to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/amr_description
+[1.124s] Installing ground_truth_waypoint_follower.py script to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/amr_description
+[1.124s] Installing obstacle_detection_node script to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/amr_description
+[1.126s] Installing odom_sim_filter script to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/amr_description
+[1.126s] writing list of installed files to '/home/r-bansode/amr-ros/colcon_ws/build/amr_description/install.log'
+[1.140s] Invoked command in '/home/r-bansode/amr-ros/colcon_ws/src/amr_description' returned '0': PYTHONPATH=/home/r-bansode/amr-ros/colcon_ws/build/amr_description/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/amr_description build --build-base /home/r-bansode/amr-ros/colcon_ws/build/amr_description/build install --record /home/r-bansode/amr-ros/colcon_ws/build/amr_description/install.log --single-version-externally-managed install_data

@@ -36,7 +36,9 @@ setup(
         'console_scripts': [
             'odom_sim_filter = amr_description.odom_sim_filter:main',
             'ground_truth_waypoint_follower.py = amr_description.ground_truth_waypoint_follower:main',
-            'obstacle_detection_node = amr_description.obstacle_detection_node:main'
+            'obstacle_detection_node = amr_description.obstacle_detection_node:main',
+            'battery_sim = amr_description.battery_sim:main',
+            'charger_dock_monitor = amr_description.charger_dock_monitor:main',
         ],
     },
 )
