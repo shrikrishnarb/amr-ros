@@ -49,6 +49,30 @@ def generate_launch_description():
             ],
         ),
 
+        # Battery simulator
+        Node(
+            package='amr_description',
+            executable='battery_sim',
+            name='battery_sim',
+            output='screen',
+            parameters=[
+                {'use_sim_time': True},
+                {'robot_namespace': namespace}
+            ],
+        ),
+
+        # Charger proximity monitor
+        Node(
+            package='amr_description',
+            executable='charger_dock_monitor',
+            name='charger_dock_monitor',
+            output='screen',
+            parameters=[
+                {'use_sim_time': True},
+                {'robot_namespace': namespace}
+            ],
+        ),
+
         # Spawn robot in Gazebo
         Node(
             package='gazebo_ros',
