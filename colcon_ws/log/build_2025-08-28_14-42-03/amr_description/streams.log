@@ -1,0 +1,48 @@
+[0.989s] Invoking command in '/home/r-bansode/amr-ros/colcon_ws/build/amr_description': PYTHONPATH=/home/r-bansode/amr-ros/colcon_ws/build/amr_description/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/r-bansode/amr-ros/colcon_ws/build/amr_description/build --no-deps symlink_data
+[1.250s] running develop
+[1.434s] running egg_info
+[1.434s] creating amr_description.egg-info
+[1.434s] writing amr_description.egg-info/PKG-INFO
+[1.434s] writing dependency_links to amr_description.egg-info/dependency_links.txt
+[1.434s] writing entry points to amr_description.egg-info/entry_points.txt
+[1.434s] writing requirements to amr_description.egg-info/requires.txt
+[1.434s] writing top-level names to amr_description.egg-info/top_level.txt
+[1.434s] writing manifest file 'amr_description.egg-info/SOURCES.txt'
+[1.434s] reading manifest file 'amr_description.egg-info/SOURCES.txt'
+[1.434s] writing manifest file 'amr_description.egg-info/SOURCES.txt'
+[1.434s] running build_ext
+[1.463s] Creating /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/python3.10/site-packages/amr-description.egg-link (link to .)
+[1.463s] Installing battery_sim script to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/amr_description
+[1.463s] Installing charger_dock_monitor script to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/amr_description
+[1.464s] Installing ground_truth_waypoint_follower.py script to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/amr_description
+[1.464s] Installing nav2navigator script to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/amr_description
+[1.464s] Installing obstacle_detection_node script to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/amr_description
+[1.464s] Installing odom_sim_filter script to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/amr_description
+[1.464s] 
+[1.464s] Installed /home/r-bansode/amr-ros/colcon_ws/build/amr_description
+[1.465s] running symlink_data
+[1.465s] creating /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/ament_index
+[1.465s] creating /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/ament_index/resource_index
+[1.465s] creating /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/ament_index/resource_index/packages
+[1.465s] symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/resource/amr_description -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/ament_index/resource_index/packages
+[1.465s] symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/package.xml -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description
+[1.465s] creating /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/launch
+[1.468s] symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/launch/localization.launch.py -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/launch
+[1.468s] symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/launch/slam.launch.py -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/launch
+[1.468s] symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/launch/ground_truth_waypoint_follower.launch.py -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/launch
+[1.468s] symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/launch/display.launch.py -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/launch
+[1.468s] symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/launch/navigation.launch.py -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/launch
+[1.468s] symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/launch/spawn_agv.launch.py -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/launch
+[1.469s] creating /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/urdf
+[1.469s] symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/urdf/amr.urdf.xacro -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/urdf
+[1.469s] creating /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/rviz
+[1.469s] creating /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/worlds
+[1.469s] symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/worlds/map.world -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/worlds
+[1.469s] symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/worlds/model.config -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/worlds
+[1.469s] symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/worlds/model.sdf -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/worlds
+[1.469s] symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/worlds/map1.world -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/worlds
+[1.469s] symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/worlds/thumbnails/3.png -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/worlds
+[1.469s] symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/worlds/thumbnails/2.png -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/worlds
+[1.469s] symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/worlds/thumbnails/1.png -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/worlds
+[1.469s] symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/worlds/meshes/walk.dae -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/worlds
+[1.483s] Invoked command in '/home/r-bansode/amr-ros/colcon_ws/build/amr_description' returned '0': PYTHONPATH=/home/r-bansode/amr-ros/colcon_ws/build/amr_description/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/r-bansode/amr-ros/colcon_ws/build/amr_description/build --no-deps symlink_data

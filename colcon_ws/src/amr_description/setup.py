@@ -39,6 +39,7 @@ setup(
             'obstacle_detection_node = amr_description.obstacle_detection_node:main',
             'battery_sim = amr_description.battery_sim:main',
             'charger_dock_monitor = amr_description.charger_dock_monitor:main',
+            'nav2navigator = amr_description.navigation:main',
         ],
     },
 )
