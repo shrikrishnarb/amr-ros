@@ -1,0 +1,46 @@
+running develop
+running egg_info
+creating amr_description.egg-info
+writing amr_description.egg-info/PKG-INFO
+writing dependency_links to amr_description.egg-info/dependency_links.txt
+writing entry points to amr_description.egg-info/entry_points.txt
+writing requirements to amr_description.egg-info/requires.txt
+writing top-level names to amr_description.egg-info/top_level.txt
+writing manifest file 'amr_description.egg-info/SOURCES.txt'
+reading manifest file 'amr_description.egg-info/SOURCES.txt'
+writing manifest file 'amr_description.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/python3.10/site-packages/amr-description.egg-link (link to .)
+Installing battery_sim script to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/amr_description
+Installing charger_dock_monitor script to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/amr_description
+Installing ground_truth_waypoint_follower.py script to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/amr_description
+Installing nav2navigator script to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/amr_description
+Installing obstacle_detection_node script to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/amr_description
+Installing odom_sim_filter script to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/amr_description
+
+Installed /home/r-bansode/amr-ros/colcon_ws/build/amr_description
+running symlink_data
+creating /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/ament_index
+creating /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/ament_index/resource_index
+creating /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/ament_index/resource_index/packages
+symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/resource/amr_description -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/ament_index/resource_index/packages
+symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/package.xml -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description
+creating /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/launch
+symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/launch/localization.launch.py -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/launch
+symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/launch/slam.launch.py -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/launch
+symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/launch/ground_truth_waypoint_follower.launch.py -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/launch
+symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/launch/display.launch.py -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/launch
+symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/launch/navigation.launch.py -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/launch
+symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/launch/spawn_agv.launch.py -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/launch
+creating /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/urdf
+symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/urdf/amr.urdf.xacro -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/urdf
+creating /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/rviz
+creating /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/worlds
+symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/worlds/map.world -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/worlds
+symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/worlds/model.config -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/worlds
+symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/worlds/model.sdf -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/worlds
+symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/worlds/map1.world -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/worlds
+symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/worlds/thumbnails/3.png -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/worlds
+symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/worlds/thumbnails/2.png -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/worlds
+symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/worlds/thumbnails/1.png -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/worlds
+symbolically linking /home/r-bansode/amr-ros/colcon_ws/build/amr_description/worlds/meshes/walk.dae -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/worlds
