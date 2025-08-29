@@ -168,9 +168,9 @@
       <static>true</static>
       <pose>-12 -6 0.025 0 0 0</pose>
       <link name="pad">
-        <collision name="col"><geometry><box><size>2 2 0.05</size></box></geometry></collision>
+        <collision name="col"><geometry><box><size>2 2 0</size></box></geometry></collision>
         <visual name="vis">
-          <geometry><box><size>2 2 0.05</size></box></geometry>
+          <geometry><box><size>2 2 0</size></box></geometry>
           <material>
             <script>
               <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -185,9 +185,9 @@
       <static>true</static>
       <pose>12 -6 0.025 0 0 0</pose>
       <link name="pad">
-        <collision name="col"><geometry><box><size>2 2 0.05</size></box></geometry></collision>
+        <collision name="col"><geometry><box><size>2 2 0</size></box></geometry></collision>
         <visual name="vis">
-          <geometry><box><size>2 2 0.05</size></box></geometry>
+          <geometry><box><size>2 2 0</size></box></geometry>
           <material>
             <script>
               <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -203,9 +203,9 @@
       <static>true</static>
       <pose>-15 10 0.025 0 0 0</pose>
       <link name="pad">
-        <collision name="col"><geometry><box><size>2.5 2.5 0.05</size></box></geometry></collision>
+        <collision name="col"><geometry><box><size>2.5 2.5 0</size></box></geometry></collision>
         <visual name="vis">
-          <geometry><box><size>2.5 2.5 0.05</size></box></geometry>
+          <geometry><box><size>2.5 2.5 0</size></box></geometry>
           <material>
             <script>
               <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -220,9 +220,9 @@
       <static>true</static>
       <pose>15 10 0.025 0 0 0</pose>
       <link name="pad">
-        <collision name="col"><geometry><box><size>2.5 2.5 0.05</size></box></geometry></collision>
+        <collision name="col"><geometry><box><size>2.5 2.5 0</size></box></geometry></collision>
         <visual name="vis">
-          <geometry><box><size>2.5 2.5 0.05</size></box></geometry>
+          <geometry><box><size>2.5 2.5 0</size></box></geometry>
           <material>
             <script>
               <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -238,9 +238,9 @@
       <static>true</static>
       <pose>-20 -10 0.025 0 0 0</pose>
       <link name="base">
-        <collision name="pad_col"><geometry><box><size>2 2 0.05</size></box></geometry></collision>
+        <collision name="pad_col"><geometry><box><size>2 2 0</size></box></geometry></collision>
         <visual name="pad_vis">
-          <geometry><box><size>2 2 0.05</size></box></geometry>
+          <geometry><box><size>2 2 0</size></box></geometry>
           <material>
             <script>
               <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -271,9 +271,9 @@
       <static>true</static>
       <pose>20 -10 0.025 0 0 0</pose>
       <link name="base">
-        <collision name="pad_col"><geometry><box><size>2 2 0.05</size></box></geometry></collision>
+        <collision name="pad_col"><geometry><box><size>2 2 0</size></box></geometry></collision>
         <visual name="pad_vis">
-          <geometry><box><size>2 2 0.05</size></box></geometry>
+          <geometry><box><size>2 2 0</size></box></geometry>
           <material>
             <script>
               <uri>file://media/materials/scripts/gazebo.material</uri>
