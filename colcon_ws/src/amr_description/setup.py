@@ -23,6 +23,7 @@ setup(
         (os.path.join('share', package_name, 'launch'), glob('launch/*.launch.py')),
         (os.path.join('share', package_name, 'urdf'), glob('urdf/*')),
         (os.path.join('share', package_name, 'rviz'), glob('rviz/*')),
+        (os.path.join('share', package_name, 'config'), glob('yaml/*')),
         (os.path.join('share', package_name, 'worlds'), get_data_files('worlds')),
     ],
     install_requires=['setuptools', 'numpy'],
@@ -40,6 +41,7 @@ setup(
             'battery_sim = amr_description.battery_sim:main',
             'charger_dock_monitor = amr_description.charger_dock_monitor:main',
             'nav2navigator = amr_description.navigation:main',
+            'fleet_manager = amr_description.fleet_manager:main',
         ],
     },
 )
