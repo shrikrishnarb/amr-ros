@@ -94,23 +94,6 @@ def launch_setup(context, *args, **kwargs):
             emulate_tty=True,
         ))
 
-        # (Optional) Battery simulator. Comment out if you don’t run it.
-        # Ensure your battery_sim publishes either:
-        #  - sensor_msgs/BatteryState  on /<ns>/battery_state
-        #  - std_msgs/Float32 (0..1 or 0..100) on /<ns>/battery_percentage
-        # nodes.append(Node(
-        #     package="amr_description",
-        #     executable="battery_sim.py",
-        #     name="battery_sim",
-        #     namespace=ns,
-        #     parameters=[{
-        #         "use_sim_time": use_sim_time,
-        #         "robot_namespace": ns,
-        #     }],
-        #     output="screen",
-        #     emulate_tty=True,
-        # ))
-
     # Fleet Manager (single instance)
     nodes.append(Node(
         package="amr_description",
