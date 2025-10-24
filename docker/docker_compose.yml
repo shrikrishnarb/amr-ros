@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+  amr-ros-dev:
+    build: .
+    image: amr-ros-dev:humble
+    container_name: amr-dev
+    network_mode: host
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ../:/workspace:rw   # mounts repo root one level up
+    devices:
+      - /dev/dri:/dev/dri   # enable OpenGL on many hosts
+    user: "${UID}:${GID}"
+    command: bash
