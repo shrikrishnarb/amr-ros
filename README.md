@@ -1,184 +1,130 @@
-# AMR-ROS: Autonomous Mobile Robot with ROS2, Gazebo, and AI
+# AMR-ROS: Multi-AGV Simulation with ROS 2, Gazebo, and Fleet Management
 
-This project builds a simulated Autonomous Mobile Robot (AMR) in Gazebo using ROS2 Humble, with full SLAM, path planning, and reinforcement learning for AI-based navigation.
+This project provides a **complete simulation framework** for **Autonomous Mobile Robots (AMRs)** using **ROS 2 Humble** and **Gazebo Classic**, featuring **multi-AGV orchestration**, **fleet management**, **battery monitoring**, and **dynamic task allocation**.
 
 ---
 
 ## Features
 
-- ROS2 Humble based architecture
-- Gazebo 3D simulation environment
-- SLAM + Path Planning with A*, Dijkstra
-- Deep Reinforcement Learning (DQN)
-- Object detection using YOLO/OpenCV
-- Dockerized for easy setup
-- Fully documented
+- **Multi-AGV Simulation** in Gazebo with ROS 2 namespaces
+- **Fleet Manager** for:
+  - Dynamic **task allocation** (pickup → drop-off)
+  - **Battery monitoring** and **automatic charging**
+- **Waypoint Navigation** using ground-truth odometry
+- **Obstacle detection & smooth stop** using LiDAR
+- **Charging station docking monitor**
+- **Configurable launch system** for spawning multiple AGVs and loading tasks from YAML
+- **Dockerized environment** for reproducibility and easy setup
 
 ---
 
 ## Tech Stack
 
-| Tool/Tech      | Purpose                     |
-|----------------|-----------------------------|
-| ROS2 Humble    | Robot middleware             |
-| Gazebo         | 3D simulation                |
-| Python         | Programming language         |
-| PyTorch/TensorFlow | AI models (DQN etc.)      |
-| Docker         | Containerization             |
-| SLAM Toolbox   | Simultaneous localization    |
-| RViz2          | Visualization                |
+| Tool/Tech         | Purpose                                  |
+|-------------------|------------------------------------------|
+| **ROS 2 Humble**  | Robot middleware                        |
+| **Gazebo Classic**| 3D simulation environment               |
+| **Python**        | ROS 2 nodes (fleet manager, controllers)|
+| **colcon**        | ROS 2 build system                      |
+| **Docker**        | Containerization for portability        |
+| **RViz2**         | Visualization                           |
 
 ---
 
 ## Directory Structure
-amr-ros/   
-├── docker/  # Docker & compose files   
-├── docs/  # Documentation & architecture   
-├── media/  # Screenshots, videos   
-├── colcon_ws/  # ROS2 workspace   
+amr-ros/
+├── docker/             # Dockerfile and scripts
+├── colcon_ws/          # ROS 2 workspace
+│   ├── src/amr_description/   # Nodes, launch files, configs
+│   └── ...
+├── docs/
+├── media/             # Screenshots, videos
+└── README.md
 
 ---
 
-## Milestones
-
-- [ ] Setup ROS2 + Gazebo
-- [ ] URDF robot model
-- [ ] SLAM mapping
-- [ ] Navigation with A*
-- [ ] RL for path planning
-- [ ] Computer vision detection
-- [ ] Docker containerization
-- [ ] Final video + documentation
+## Core Components
+- **ground_truth_waypoint_follower.py**  
+  Executes dynamic goals (`/<ns>/goal_pose`) → publishes `cmd_vel` with obstacle-aware smooth stopping.
+- **obstacle_detection_node.py**  
+  Monitors LiDAR scan → publishes `/<ns>/obstacle_detected`.
+- **fleet_manager.py**  
+  Assigns tasks from `tasks.yaml`, monitors battery, sends goals to AGVs.
+- **charger_dock_monitor.py**  
+  Detects proximity to charging stations → publishes `/<ns>/on_charger`.
 
 ---
 
-## Installation Procedure
+## Installation & Setup
 
-### Installing WSL (for Windows)
-1. Open a command prompt in **Administrator mode** and run the following command:
-    ```bash
-    wsl --install
-    ```
-
-2. Open Ubuntu from the Start menu and set your username and password in Ubuntu.  
-   You need to set it here before opening it from Windows Terminal.
-
-#### Starting Ubuntu (WSL)
-1. Start Windows Terminal.
-2. Select the **Ubuntu** tab from the `+` button to the right of the `↓` symbol.
-
-### Install Docker on Ubuntu
-Install Docker Engine on Ubuntu by following the official Docker installation steps. Here are the commands:
-
-1. Update package lists and install prerequisites:
-    ```bash
-    sudo apt-get update
-    sudo apt-get install ca-certificates curl
-    ```
-
-2. Install the Docker GPG key:
-    ```bash
-    sudo install -m 0755 -d /etc/apt/keyrings
-    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-    sudo chmod a+r /etc/apt/keyrings/docker.asc
-    ```
-
-3. Add Docker's official repository:
-    ```bash
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-    ```
-
-4. Install Docker packages:
-    ```bash
-    sudo apt-get update
-    sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-    ```
-
-5. Verify Docker installation by running:
-    ```bash
-    sudo docker run hello-world
-    Hello from Docker!
-    This message shows that your installation appears to be working correctly.
-
-    To generate this message, Docker took the following steps:
-    1. The Docker client contacted the Docker daemon.
-    2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
-       (amd64)
-    3. The Docker daemon created a new container from that image which runs the
-       executable that produces the output you are currently reading.
-    4. The Docker daemon streamed that output to the Docker client, which sent it
-       to your terminal.
-
-    ```
-
-### Advanced Preparation
-
-#### Add the Development Account to the Docker Group
-You need to be able to run Docker commands without using `sudo`. To check whether you can run commands without `sudo`, run:
-
-```bash
-# Example output when sudo is required for execution
-docker ps
-permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get "http://%2Fvar%2Frun%2Fdocker.sock/v1.46/containers/json": dial unix /var/run/docker.sock: connect: permission denied
-```
-```bash
-# Example output when sudo is not required for execution
-docker ps
-CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
-```
-
-You can run sudo without adding the account to the docker group docker. To add the account to the docker group, run the following command.
-```bash
-sudo gpasswd -a $USER docker
-```
-
-Please log out and log back in to reflect the group addition. Try running it again and 
-make sure it can be run without logging in .docker ps sudo docker
-
-### Clone the repository from GitHub
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/shrikrishnarb/amr-ros.git
+cd amr-ros
 ```
 
-### Build and Run the Docker Container
-
-From the docker/ directory, build your Docker image:
-
+### 2. Build Docker Image
+From the docker/ directory:
 ```bash
-cd amr-ros/docker
+cd docker
 docker build -t amr-ros-dev .
 ```
 
-Run the container interactively:
-
+### 3. Run the Container
+Enable X11 for GUI (Gazebo, RViz):
 ```bash
-docker run -it --rm --name amr-dev \
-    --net=host \
-    --env="DISPLAY=$DISPLAY" \
-    --privileged \
-    -v /tmp/.X11-unix:/tmp/.X11-unix \
-    -v $(pwd)/../:/workspace \
-    amr-ros-dev
+# Allow X11 for GUI apps (Gazebo, RViz)
+xhost +local:root
+
+# Build and start the container
+docker compose up --build
+```
+For stopping the container:
+```bash
+docker compose down
 ```
 
-Verify Installation
-Inside the container:
+### 4. Inside the Container
 ```bash
-source /opt/ros/humble/setup.bash
-echo $ROS_DISTRO
-ign gazebo --version
-```
-
-You should see:
-
-humble  
-Gazebo Sim, version 6.17.0  
-Copyright (C) 2018 Open Source Robotics Foundation.  
-Released under the Apache 2.0 License.  
-
-Inside the docker
-```bash
-cd /workspace/colcon_ws/
-colcon build
+cd /workspace/colcon_ws
+colcon build --symlink-install
 source install/setup.bash
 ```
+
+## Run the Simulation
+
+### **1. General Display + Multi-AGV + Obstacle Detection**
+Start Gazebo and RViz with one AGV:
+```bash
+ros2 launch amr_description display.launch.py namespace:=agv1
+```
+Spawn another AGV in a new terminal:
+```bash
+ros2 launch amr_description spawn_agv.launch.py namespace:=agv2 x:=2.0 y:=2.0
+```
+Move a specific AGV to a target pose:
+```bash
+ros2 launch amr_description ground_truth_waypoint_follower.launch.py namespace:=agv1 x:=5.0 y:=6.0
+```
+**Tip: Replace agv1, agv2, and coordinates (x, y) as needed and spawn as many agv's as required.
+
+### **2. Fleet Management
+Follow the first two steps above to spawn the desired number of AGVs.
+**Important: Use names like agv1, agv2, … for fleet manager compatibility.
+Run the fleet manager:
+```bash
+ros2 launch amr_description multi_agv_tasks.launch.py num_agvs:=2
+```
+To customize tasks, edit:
+colcon_ws/src/amr_description/yaml/tasks.yaml
+
+### **3. Slam and Navigation
+Basic SLAM:
+```bash
+ros2 launch amr_description slam.launch.py
+```
+Basic Navigation:
+```bash
+ros2 launch amr_description navigation.launch.py
+```
+**Note: Navigation features are not integrated with fleet management yet; these are standalone demos.
