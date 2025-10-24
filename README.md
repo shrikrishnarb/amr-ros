@@ -32,6 +32,7 @@ This project provides a **complete simulation framework** for **Autonomous Mobil
 ---
 
 ## Directory Structure
+```
 amr-ros/
 ├── docker/             # Dockerfile and scripts
 ├── colcon_ws/          # ROS 2 workspace
@@ -40,6 +41,7 @@ amr-ros/
 ├── docs/
 ├── media/             # Screenshots, videos
 └── README.md
+```
 
 ---
 
@@ -106,11 +108,11 @@ Move a specific AGV to a target pose:
 ```bash
 ros2 launch amr_description ground_truth_waypoint_follower.launch.py namespace:=agv1 x:=5.0 y:=6.0
 ```
-**Tip: Replace agv1, agv2, and coordinates (x, y) as needed and spawn as many agv's as required.
+**Tip:** Replace agv1, agv2, and coordinates (x, y) as needed and spawn as many agv's as required.
 
-### **2. Fleet Management
+### **2. Fleet Management**
 Follow the first two steps above to spawn the desired number of AGVs.
-**Important: Use names like agv1, agv2, … for fleet manager compatibility.
+**Important:** Use names like agv1, agv2, … for fleet manager compatibility.
 Run the fleet manager:
 ```bash
 ros2 launch amr_description multi_agv_tasks.launch.py num_agvs:=2
@@ -118,7 +120,7 @@ ros2 launch amr_description multi_agv_tasks.launch.py num_agvs:=2
 To customize tasks, edit:
 colcon_ws/src/amr_description/yaml/tasks.yaml
 
-### **3. Slam and Navigation
+### **3. Slam and Navigation**
 Basic SLAM:
 ```bash
 ros2 launch amr_description slam.launch.py
@@ -127,4 +129,4 @@ Basic Navigation:
 ```bash
 ros2 launch amr_description navigation.launch.py
 ```
-**Note: Navigation features are not integrated with fleet management yet; these are standalone demos.
+**Note:** Navigation features are not integrated with fleet management yet; these are standalone demos.
