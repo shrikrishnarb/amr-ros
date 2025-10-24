@@ -68,8 +68,7 @@ cd amr-ros
 ### 2. Build Docker Image
 From the docker/ directory:
 ```bash
-cd docker
-docker build -t amr-ros-dev .
+docker build -t amr-ros-dev -f docker/Dockerfile .
 ```
 
 ### 3. Run the Container
@@ -84,7 +83,8 @@ Enable X11 for GUI (Gazebo, RViz):
 xhost +local:root
 
 # Build and start the container
-docker compose up --build
+cd docker
+docker compose up --build -d
 
 # Start the container
 docker exec -it amr-ros-dev bash  # For gpu use (docker exec amr-ros-dev-gpu bash)
