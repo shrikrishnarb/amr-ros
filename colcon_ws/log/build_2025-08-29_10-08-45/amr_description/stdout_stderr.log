@@ -1,0 +1,25 @@
+running egg_info
+writing ../../build/amr_description/amr_description.egg-info/PKG-INFO
+writing dependency_links to ../../build/amr_description/amr_description.egg-info/dependency_links.txt
+writing entry points to ../../build/amr_description/amr_description.egg-info/entry_points.txt
+writing requirements to ../../build/amr_description/amr_description.egg-info/requires.txt
+writing top-level names to ../../build/amr_description/amr_description.egg-info/top_level.txt
+reading manifest file '../../build/amr_description/amr_description.egg-info/SOURCES.txt'
+writing manifest file '../../build/amr_description/amr_description.egg-info/SOURCES.txt'
+running build
+running build_py
+running install
+running install_lib
+running install_data
+copying worlds/map.world -> /home/r-bansode/amr-ros/colcon_ws/install/amr_description/share/amr_description/worlds
+running install_egg_info
+removing '/home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/python3.10/site-packages/amr_description-0.0.0-py3.10.egg-info' (and everything under it)
+Copying ../../build/amr_description/amr_description.egg-info to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/python3.10/site-packages/amr_description-0.0.0-py3.10.egg-info
+running install_scripts
+Installing battery_sim script to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/amr_description
+Installing charger_dock_monitor script to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/amr_description
+Installing ground_truth_waypoint_follower.py script to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/amr_description
+Installing nav2navigator script to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/amr_description
+Installing obstacle_detection_node script to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/amr_description
+Installing odom_sim_filter script to /home/r-bansode/amr-ros/colcon_ws/install/amr_description/lib/amr_description
+writing list of installed files to '/home/r-bansode/amr-ros/colcon_ws/build/amr_description/install.log'
