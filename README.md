@@ -73,6 +73,11 @@ docker build -t amr-ros-dev .
 ```
 
 ### 3. Run the Container
+**Prerequisite for GUI (Gazebo, RViz):**
+Ensure `xhost` is installed on your host:
+```bash
+sudo apt-get install x11-xserver-utils
+```
 Enable X11 for GUI (Gazebo, RViz):
 ```bash
 # Allow X11 for GUI apps (Gazebo, RViz)
@@ -80,6 +85,9 @@ xhost +local:root
 
 # Build and start the container
 docker compose up --build
+
+# Start the container
+docker exec -it amr-ros-dev bash  # For gpu use (docker exec amr-ros-dev-gpu bash)
 ```
 For stopping the container:
 ```bash
@@ -90,7 +98,8 @@ docker compose down
 ```bash
 cd /workspace/colcon_ws
 colcon build --symlink-install
-source install/setup.bash
+source /opt/ros/humble/setup.bash
+source /workspace/colcon_ws/install/setup.bash
 ```
 
 ## Run the Simulation
