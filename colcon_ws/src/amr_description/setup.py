@@ -24,7 +24,7 @@ setup(
         (os.path.join('share', package_name, 'yaml'), get_data_files('yaml')),
         (os.path.join('share', package_name, 'worlds'), get_data_files('worlds')),
     ],
-    install_requires=['setuptools', 'numpy'],
+    install_requires=['setuptools'],
     zip_safe=True,
     maintainer='root',
     maintainer_email='shrikrishnarb@gmail.com',

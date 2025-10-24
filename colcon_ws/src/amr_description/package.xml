@@ -15,7 +15,13 @@
   <depend>nav_msgs</depend>
   <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
+  <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>nav2_simple_commander</exec_depend>
+  <exec_depend>angles</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+
 
   <export>
     <build_type>ament_python</build_type>
