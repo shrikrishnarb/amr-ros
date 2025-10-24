@@ -1,7 +1,9 @@
 # docker/docker-compose.yml
 services:
   amr-ros-dev:
-    build: .
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
     image: amr-ros-dev:humble
     container_name: amr-ros-dev          # keep a single service's fixed name
     network_mode: host

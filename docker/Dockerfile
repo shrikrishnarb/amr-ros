@@ -20,8 +20,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # ---- rosdep (install deps declared in package.xml) ----
 # Copy only manifests to leverage Docker layer caching
 WORKDIR /tmp/manifests
-COPY src/amr_description/package.xml /tmp/manifests/amr_description/package.xml
+COPY colcon_ws/src/amr_description/package.xml /tmp/manifests/amr_description/package.xml
 # Initialize & run rosdep (handle images where init isn't pre-run)
+RUN apt-get update && apt-get install -y ros-humble-nav2-simple-commander || true
 RUN rosdep update || (rosdep init && rosdep update) && \
     rosdep install --from-paths /tmp/manifests --ignore-src -r -y
 
@@ -39,7 +40,7 @@ WORKDIR /workspace/colcon_ws
 RUN mkdir -p src
 
 # Entry point
-COPY ros_entrypoint.sh /ros_entrypoint.sh
+COPY docker/ros_entrypoint.sh /ros_entrypoint.sh
 RUN chmod +x /ros_entrypoint.sh
 ENTRYPOINT ["/ros_entrypoint.sh"]
 CMD ["bash"]
