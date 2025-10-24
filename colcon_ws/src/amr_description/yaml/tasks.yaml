@@ -1,0 +1,21 @@
+zones:
+  pickup_zone_A: {cx: -12.0, cy: -6.0, sx: 2.0, sy: 2.0, yaw: 0.0}
+  pickup_zone_B: {cx:  12.0, cy: -6.0, sx: 2.0, sy: 2.0, yaw: 0.0}
+  dropoff_zone_A: {cx: -15.0, cy: 10.0, sx: 2.5, sy: 2.5, yaw: 0.0}
+  dropoff_zone_B: {cx:  15.0, cy: 10.0, sx: 2.5, sy: 2.5, yaw: 0.0}
+  charger_1:      {cx: -20.0, cy: -10.0, sx: 2.0, sy: 2.0, yaw: 0.0}
+  charger_2:      {cx:  20.0, cy: -10.0, sx: 2.0, sy: 2.0, yaw: 0.0}
+
+tasks:
+  - id: T1
+    pickup:  pickup_zone_A
+    dropoff: dropoff_zone_B
+    load_time:   3.0
+    unload_time: 3.0
+    priority: 1
+  - id: T2
+    pickup:  pickup_zone_B
+    dropoff: dropoff_zone_A
+    load_time:   3.0
+    unload_time: 3.0
+    priority: 1

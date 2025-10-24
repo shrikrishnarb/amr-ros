@@ -240,7 +240,7 @@
       <link name="base">
         <collision name="pad_col"><geometry><box><size>2 2 0</size></box></geometry></collision>
         <visual name="pad_vis">
-          <geometry><box><size>2 2 0</size></box></geometry>
+          <geometry><box><size>2 2 0.001</size></box></geometry>
           <material>
             <script>
               <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -273,7 +273,7 @@
       <link name="base">
         <collision name="pad_col"><geometry><box><size>2 2 0</size></box></geometry></collision>
         <visual name="pad_vis">
-          <geometry><box><size>2 2 0</size></box></geometry>
+          <geometry><box><size>2 2 0.001</size></box></geometry>
           <material>
             <script>
               <uri>file://media/materials/scripts/gazebo.material</uri>

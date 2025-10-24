@@ -1,44 +1,35 @@
-FROM ubuntu:22.04
+# docker/Dockerfile
+FROM ros:humble-ros-base-jammy
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ=Asia/Tokyo
+# Locale (optional), basic tools, ROS dev tools, Gazebo Classic, RViz, xacro
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    bash-completion build-essential cmake git wget curl \
+    python3-pip python3-vcstool python3-rosdep python3-colcon-common-extensions \
+    ros-dev-tools \
+    ros-humble-rviz2 ros-humble-xacro ros-humble-gazebo-ros-pkgs \
+    gazebo \
+    libgl1-mesa-glx libx11-6 libxext6 \
+ && rm -rf /var/lib/apt/lists/*
 
-# 1. Install basic tools & setup locale
-RUN apt update && apt install -y \
-    locales curl gnupg2 lsb-release wget git sudo software-properties-common \
-    && locale-gen en_US en_US.UTF-8 && \
-    update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+# Optional Python libs commonly used by AMR projects (adjust as needed)
+RUN pip3 install --no-cache-dir numpy pyyaml
 
-ENV LANG=en_US.UTF-8
-ENV LC_ALL=en_US.UTF-8
+# Create a non-root user so mounted files aren’t owned by root on the host
+ARG USERNAME=developer
+ARG USER_UID=1000
+ARG USER_GID=1000
+RUN groupadd --gid $USER_GID $USERNAME \
+ && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+ && echo "$USERNAME ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/$USERNAME \
+ && chmod 0440 /etc/sudoers.d/$USERNAME
 
-# 2. Add ROS2 Humble repository
-RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key | apt-key add - && \
-    echo "deb http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" > /etc/apt/sources.list.d/ros2.list
+# Workspace location expected by the README steps
+WORKDIR /workspace/colcon_ws
+RUN mkdir -p src
 
-# 3. Add Gazebo Fortress repository
-RUN wget https://packages.osrfoundation.org/gazebo.key -O - | apt-key add - && \
-    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" > /etc/apt/sources.list.d/gazebo-stable.list
-
-# 4. Install ROS2, Gazebo Fortress, and extra useful packages
-RUN apt update && apt install -y \
-    ros-humble-desktop \
-    ros-humble-gazebo-ros-pkgs \
-    ros-humble-teleop-twist-keyboard \
-    ignition-fortress \
-    libignition-gazebo6-dev \
-    libignition-msgs8-dev \
-    libignition-transport11-dev \
-    python3-colcon-common-extensions \
-    python3-pip \
-    python3-vcstool \
-    build-essential \
-    nano \
-    xterm \
-    && apt clean
-
-# 5. Source ROS setup in every shell
-RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc
-
-# 6. Working directory
-WORKDIR /workspace
+# Lightweight entrypoint: source ROS + workspace if present; set X11 var
+COPY ros_entrypoint.sh /ros_entrypoint.sh
+RUN chmod +x /ros_entrypoint.sh
+ENTRYPOINT ["/ros_entrypoint.sh"]
+CMD ["bash"]

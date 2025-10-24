@@ -5,7 +5,6 @@ import os
 package_name = 'amr_description'
 
 def get_data_files(directory):
-    # Recursively get all files (exclude directories)
     paths = []
     for root, _, files in os.walk(directory):
         for f in files:
@@ -17,12 +16,12 @@ setup(
     version='0.0.0',
     packages=find_packages(exclude=['test']),
     data_files=[
-        ('share/ament_index/resource_index/packages',
-            ['resource/' + package_name]),
+        ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         (os.path.join('share', package_name, 'launch'), glob('launch/*.launch.py')),
         (os.path.join('share', package_name, 'urdf'), glob('urdf/*')),
         (os.path.join('share', package_name, 'rviz'), glob('rviz/*')),
+        (os.path.join('share', package_name, 'yaml'), get_data_files('yaml')),
         (os.path.join('share', package_name, 'worlds'), get_data_files('worlds')),
     ],
     install_requires=['setuptools', 'numpy'],
@@ -40,6 +39,7 @@ setup(
             'battery_sim = amr_description.battery_sim:main',
             'charger_dock_monitor = amr_description.charger_dock_monitor:main',
             'nav2navigator = amr_description.navigation:main',
+            'fleet_manager = amr_description.fleet_manager:main',
         ],
     },
 )
