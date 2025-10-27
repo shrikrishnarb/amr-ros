@@ -25,22 +25,40 @@ This project provides a **complete simulation framework** for **Autonomous Mobil
 | **ROS 2 Humble**  | Robot middleware                        |
 | **Gazebo Classic**| 3D simulation environment               |
 | **Python**        | ROS 2 nodes (fleet manager, controllers)|
-| **colcon**        | ROS 2 build system                      |
 | **Docker**        | Containerization for portability        |
 | **RViz2**         | Visualization                           |
 
 ---
 
+## Background
+- Real-world AMR fleets require scalable orchestration to manage multiple robots in dynamic warehouse environments.
+- This project simulates such an ecosystem, focusing on autonomous task scheduling, obstacle avoidance, and charging logic — all crucial aspects of real-world fleet control systems.
+
+---
+
 ## Directory Structure
+
 ```
 amr-ros/
-├── docker/             # Dockerfile and scripts
-├── colcon_ws/          # ROS 2 workspace
-│   ├── src/amr_description/   # Nodes, launch files, configs
-│   └── ...
-├── docs/
-├── media/             # Screenshots, videos
-└── README.md
+├── docker/                     # Dockerfile and setup scripts for containerized environment
+│
+├── colcon_ws/                  # ROS 2 workspace
+│   └── src/
+│       └── amr_description/    # Main AMR (Autonomous Mobile Robot) package
+│           ├── amr_description/   # Python source code
+│           ├── launch/            # Launch files for navigation, SLAM, fleet manager, etc.
+│           ├── maps/              # Map files for simulation or localization
+│           ├── resource/          # URDFs, meshes, and robot resources
+│           ├── test/              # Unit and integration tests
+│           ├── urdf/              # Robot model definitions (URDF/Xacro)
+│           ├── worlds/            # Gazebo world files
+│           └── yaml/              # Configuration and parameter YAMLs
+│
+├── docs/                        # Documentation, design notes, diagrams
+│
+├── media/                       # Screenshots, simulation captures, videos
+│
+└── README.md                    # Project overview and setup guide
 ```
 
 ---
@@ -139,3 +157,11 @@ Basic Navigation:
 ros2 launch amr_description navigation.launch.py
 ```
 **Note:** Navigation features are not integrated with fleet management yet; these are standalone demos.
+
+---
+
+## AI Usage
+AI tools were used to refine the README’s clarity and to assist in structuring launch files and FSM transitions.  
+All core logic (fleet coordination, waypoint navigation, and obstacle handling) was implemented manually.
+
+---
