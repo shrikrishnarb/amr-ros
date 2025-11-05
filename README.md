@@ -133,7 +133,7 @@ ros2 launch amr_description spawn_agv.launch.py namespace:=agv2 x:=2.0 y:=2.0
 ```
 Move a specific AGV to a target pose:
 ```bash
-ros2 launch amr_description ground_truth_waypoint_follower.launch.py namespace:=agv1 x:=5.0 y:=6.0
+ros2 launch amr_description ground_truth_waypoint_follower.launch.py namespace:=agv1 x:=-5.0 y:=-6.0
 ```
 **Tip:** Replace agv1, agv2, and coordinates (x, y) as needed and spawn as many agv's as required.
 
