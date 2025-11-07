@@ -34,16 +34,16 @@ class GtSimpleWaypointFollower(Node):
         # ======== Motion/goal parameters ========
         self.target_x = self.declare_parameter("target_x", 0.0).value
         self.target_y = self.declare_parameter("target_y", 0.0).value
-        self.max_linear = self.declare_parameter("max_linear", 1.0).value
+        self.max_linear = self.declare_parameter("max_linear", 0.5).value
         self.min_linear = self.declare_parameter("min_linear", 0.05).value
         self.linear_gain = self.declare_parameter("linear_gain", 1.0).value
         self.max_angular = self.declare_parameter("max_angular", 1.57).value
-        self.angular_gain = self.declare_parameter("angular_gain", 1.0).value
-        self.acc_x_lim = self.declare_parameter("acc_x_lim", 0.25).value       # slightly higher decel rate
-        self.acc_theta_lim = self.declare_parameter("acc_theta_lim", 0.6).value
+        self.angular_gain = self.declare_parameter("angular_gain", 0.6).value
+        self.acc_x_lim = self.declare_parameter("acc_x_lim", 0.8).value
+        self.acc_theta_lim = self.declare_parameter("acc_theta_lim", 1.0).value
         self.control_rate = self.declare_parameter("control_rate", 30.0).value
         self.goal_reach_dist = self.declare_parameter("goal_reach_dist", 0.1).value
-        self.rotate_move_th = self.declare_parameter("rotate_move_th", 0.1745).value  # ~10 deg
+        self.rotate_move_th = self.declare_parameter("rotate_move_th", 0.3).value  # ~17 deg
         self.delay_start_time = self.declare_parameter("delay_start_time", 0.0).value
         self.shutdown_when_idle = self.declare_parameter("shutdown_when_idle", False).value
 
@@ -181,6 +181,7 @@ class GtSimpleWaypointFollower(Node):
             angular = self.adjust_acceleration(desired_angular, self.pre_angular, self.acc_theta_lim)
             self.fnMove(linear, angular)
             return
+
 
         # Normal rotate-then-move control
         if abs(dyaw) > self.rotate_move_th:
