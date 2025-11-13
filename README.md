@@ -160,6 +160,20 @@ ros2 launch amr_description navigation.launch.py
 
 ---
 
+## Demo & Screenshots
+Below are some visuals from the project setup and simulation.
+
+### Gazebo World
+![Gazebo World](media/world.png)
+
+### Multiple AGV's spawned
+![Multi AGV setup](media/agv.png)
+
+### 3D Lidar
+![3D Lidar](media/3D-lidar.png)
+
+---
+
 ## AI Usage
 AI tools were used to refine the README’s clarity and to assist in structuring launch files and FSM transitions.  
 All core logic (fleet coordination, waypoint navigation, and obstacle handling) was implemented manually.
