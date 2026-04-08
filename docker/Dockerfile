@@ -5,16 +5,29 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Base tools + ROS dev tools + GUI bits
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    bash-completion build-essential cmake git wget curl \
+    bash-completion build-essential cmake git wget curl xterm \
     python3-pip python3-vcstool python3-rosdep python3-colcon-common-extensions \
     ros-dev-tools \
     ros-humble-rviz2 ros-humble-xacro ros-humble-gazebo-ros-pkgs \
     gazebo \
     libgl1-mesa-glx libx11-6 libxext6 \
-    # Explicit runtime deps to avoid surprises
+    # Motion / transform deps
     ros-humble-angles \
     ros-humble-tf-transformations \
+    ros-humble-tf2-ros \
     python3-numpy python3-yaml \
+    # Navigation stack
+    ros-humble-navigation2 \
+    ros-humble-nav2-bringup \
+    ros-humble-nav2-simple-commander \
+    ros-humble-nav2-map-server \
+    # SLAM
+    ros-humble-slam-toolbox \
+    # Teleop
+    ros-humble-teleop-twist-keyboard \
+    # Robot state / joint state publishers
+    ros-humble-robot-state-publisher \
+    ros-humble-joint-state-publisher \
  && rm -rf /var/lib/apt/lists/*
 
 # ---- rosdep (install deps declared in package.xml) ----
@@ -22,7 +35,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /tmp/manifests
 COPY colcon_ws/src/amr_description/package.xml /tmp/manifests/amr_description/package.xml
 # Initialize & run rosdep (handle images where init isn't pre-run)
-RUN apt-get update && apt-get install -y ros-humble-nav2-simple-commander || true
 RUN rosdep update || (rosdep init && rosdep update) && \
     rosdep install --from-paths /tmp/manifests --ignore-src -r -y
 

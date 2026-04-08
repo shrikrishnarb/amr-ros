@@ -9,7 +9,7 @@ def generate_launch_description():
     pkg_amr = FindPackageShare('amr_description')
 
     urdf_path = PathJoinSubstitution([
-        pkg_amr, 'urdf', 'amr.urdf'
+        pkg_amr, 'urdf', 'amr.urdf.xacro'
     ])
 
     rviz_config_path = PathJoinSubstitution([
@@ -17,7 +17,7 @@ def generate_launch_description():
     ])
 
     robot_desc = Command([
-        TextSubstitution(text='cat '),
+        TextSubstitution(text='xacro '),
         urdf_path
     ])
 

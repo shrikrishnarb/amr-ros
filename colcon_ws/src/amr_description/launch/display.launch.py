@@ -1,5 +1,6 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, Command
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
@@ -16,7 +17,14 @@ def generate_launch_description():
         description='Robot namespace'
     )
 
+    use_rviz_arg = DeclareLaunchArgument(
+        'use_rviz',
+        default_value='false',
+        description='Launch RViz2 for visualization (default: false)'
+    )
+
     namespace = LaunchConfiguration('namespace')
+    use_rviz = LaunchConfiguration('use_rviz')
 
     pkg_amr = FindPackageShare('amr_description')
 
@@ -53,6 +61,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         namespace_arg,
+        use_rviz_arg,
         declare_world_fname,
         gazebo,
 
@@ -107,13 +116,14 @@ def generate_launch_description():
             ]
         ),
 
-        # RViz2
+        # RViz2 — only started when use_rviz:=true
         Node(
             package='rviz2',
             executable='rviz2',
             name='rviz2',
             output='screen',
-            parameters=[{'use_sim_time': True}]
+            parameters=[{'use_sim_time': True}],
+            condition=IfCondition(use_rviz)
         ),
 
         # Spawn robot in Gazebo

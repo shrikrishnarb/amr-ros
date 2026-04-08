@@ -16,7 +16,7 @@ def dist(a, b):
 def stamp_now(node):
     msg = PoseStamped()
     msg.header.stamp = node.get_clock().now().to_msg()
-    msg.header.frame_id = "world"
+    msg.header.frame_id = "map"
     return msg
 
 class AGVState:
@@ -107,6 +107,12 @@ class FleetManager(Node):
 
         # Timers
         self.control_timer = self.create_timer(0.25, self.step)  # main loop
+
+        # Goal re-send: re-publish the active goal every N seconds so that
+        # nav2_goal_bridge receives it even if it wasn't subscribed at the
+        # moment of the first publication (Nav2 activation takes time).
+        self._goal_last_sent: dict = {ns: 0.0 for ns in self.ns_list}
+        self._goal_resend_interval = 10.0  # seconds — longer than BT recovery cycle (~8 s)
 
         self.get_logger().info(f"FleetManager started. AGVs: {self.ns_list}, tasks in queue: {len(self.task_queue)}")
 
@@ -213,6 +219,8 @@ class FleetManager(Node):
                 agv.state = 'CHARGING'
                 agv.state_since = now
                 self.get_logger().info(f"[{ns}] Arrived at charger. Waiting to charge...")
+            else:
+                self._resend_goal_if_due(ns, self.target_zone_of(ns), now)
             return
 
         if agv.state == 'CHARGING':
@@ -227,6 +235,8 @@ class FleetManager(Node):
                 agv.state = 'LOADING'
                 agv.state_since = now
                 self.get_logger().info(f"[{ns}] At pickup {agv.task['pickup']}. Loading...")
+            else:
+                self._resend_goal_if_due(ns, tz, now)
             return
 
         if agv.state == 'LOADING':
@@ -247,6 +257,8 @@ class FleetManager(Node):
                 agv.state = 'UNLOADING'
                 agv.state_since = now
                 self.get_logger().info(f"[{ns}] At dropoff {agv.task['dropoff']}. Unloading...")
+            else:
+                self._resend_goal_if_due(ns, tz, now)
             return
 
         if agv.state == 'UNLOADING':
@@ -270,6 +282,15 @@ class FleetManager(Node):
         self.goal_pub[ns].publish(msg)
         # Track current navigation target per AGV for zone checks
         setattr(self, f'_target_zone_{ns}', zone_name)
+        self._goal_last_sent[ns] = time.time()
+
+    def _resend_goal_if_due(self, ns, zone_name, now):
+        """Re-publish the navigation goal if the resend interval has elapsed.
+        Ensures nav2_goal_bridge receives the goal even if it missed the first
+        publication (e.g., because Nav2 was still activating at that time)."""
+        if zone_name and now - self._goal_last_sent.get(ns, 0.0) >= self._goal_resend_interval:
+            self.get_logger().info(f"[{ns}] Re-sending goal to {zone_name} (nav2_goal_bridge may have missed initial publish).")
+            self.nav_to_zone(ns, zone_name)
 
     def target_zone_of(self, ns):
         return getattr(self, f'_target_zone_{ns}', None)

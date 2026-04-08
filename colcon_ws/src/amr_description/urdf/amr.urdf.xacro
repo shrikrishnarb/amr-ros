@@ -157,8 +157,8 @@
           <horizontal>
             <samples>720</samples>
             <resolution>1</resolution>
-            <min_angle>-1.5708</min_angle>
-            <max_angle>1.5708</max_angle>
+            <min_angle>-3.14159</min_angle>
+            <max_angle>3.14159</max_angle>
           </horizontal>
         </scan>
         <range>
@@ -195,7 +195,7 @@
       <wheel_diameter>0.1</wheel_diameter>
       <max_wheel_acceleration>1.0</max_wheel_acceleration>
       <max_wheel_torque>200</max_wheel_torque>
-      <command_topic>/cmd_vel</command_topic>
+      <command_topic>cmd_vel</command_topic>
       <odometry_frame>world</odometry_frame>
       <robot_base_frame>base_link</robot_base_frame>
       <publish_odom>true</publish_odom>

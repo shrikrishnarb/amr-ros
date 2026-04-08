@@ -163,14 +163,13 @@
     </model>
 
     <!-- ===== Pickup & Drop-off pads ===== -->
-    <!-- Pickup (green) -->
+    <!-- Pickup (green) — visual-only, no collision so AGVs can drive over freely -->
     <model name="pickup_zone_A">
       <static>true</static>
-      <pose>-12 -6 0.025 0 0 0</pose>
+      <pose>-12 -6 0.005 0 0 0</pose>
       <link name="pad">
-        <collision name="col"><geometry><box><size>2 2 0</size></box></geometry></collision>
         <visual name="vis">
-          <geometry><box><size>2 2 0</size></box></geometry>
+          <geometry><box><size>2 2 0.001</size></box></geometry>
           <material>
             <script>
               <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -183,11 +182,10 @@
 
     <model name="pickup_zone_B">
       <static>true</static>
-      <pose>12 -6 0.025 0 0 0</pose>
+      <pose>12 -6 0.005 0 0 0</pose>
       <link name="pad">
-        <collision name="col"><geometry><box><size>2 2 0</size></box></geometry></collision>
         <visual name="vis">
-          <geometry><box><size>2 2 0</size></box></geometry>
+          <geometry><box><size>2 2 0.001</size></box></geometry>
           <material>
             <script>
               <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -198,14 +196,13 @@
       </link>
     </model>
 
-    <!-- Drop-off (blue) -->
+    <!-- Drop-off (blue) — visual-only, no collision so AGVs can drive over freely -->
     <model name="dropoff_zone_A">
       <static>true</static>
-      <pose>-15 10 0.025 0 0 0</pose>
+      <pose>-15 10 0.005 0 0 0</pose>
       <link name="pad">
-        <collision name="col"><geometry><box><size>2.5 2.5 0</size></box></geometry></collision>
         <visual name="vis">
-          <geometry><box><size>2.5 2.5 0</size></box></geometry>
+          <geometry><box><size>2.5 2.5 0.001</size></box></geometry>
           <material>
             <script>
               <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -218,11 +215,10 @@
 
     <model name="dropoff_zone_B">
       <static>true</static>
-      <pose>15 10 0.025 0 0 0</pose>
+      <pose>15 10 0.005 0 0 0</pose>
       <link name="pad">
-        <collision name="col"><geometry><box><size>2.5 2.5 0</size></box></geometry></collision>
         <visual name="vis">
-          <geometry><box><size>2.5 2.5 0</size></box></geometry>
+          <geometry><box><size>2.5 2.5 0.001</size></box></geometry>
           <material>
             <script>
               <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -234,11 +230,11 @@
     </model>
 
     <!-- ===== Charging Stations (yellow pad + post + contact sensor) ===== -->
+    <!-- Charging stations — pad is visual-only; docking detection uses odometry proximity -->
     <model name="charging_station_1">
       <static>true</static>
-      <pose>-20 -10 0.025 0 0 0</pose>
+      <pose>-20 -10 0.005 0 0 0</pose>
       <link name="base">
-        <collision name="pad_col"><geometry><box><size>2 2 0</size></box></geometry></collision>
         <visual name="pad_vis">
           <geometry><box><size>2 2 0.001</size></box></geometry>
           <material>
@@ -257,21 +253,13 @@
           <geometry><box><size>0.2 0.2 1.3</size></box></geometry>
           <material><ambient>0.2 0.2 0.2 1</ambient></material>
         </visual>
-        <sensor name="charger_contact_1" type="contact">
-          <always_on>true</always_on>
-          <update_rate>20</update_rate>
-          <contact>
-            <collision>pad_col</collision>
-          </contact>
-        </sensor>
       </link>
     </model>
 
     <model name="charging_station_2">
       <static>true</static>
-      <pose>20 -10 0.025 0 0 0</pose>
+      <pose>20 -10 0.005 0 0 0</pose>
       <link name="base">
-        <collision name="pad_col"><geometry><box><size>2 2 0</size></box></geometry></collision>
         <visual name="pad_vis">
           <geometry><box><size>2 2 0.001</size></box></geometry>
           <material>
@@ -290,13 +278,6 @@
           <geometry><box><size>0.2 0.2 1.3</size></box></geometry>
           <material><ambient>0.2 0.2 0.2 1</ambient></material>
         </visual>
-        <sensor name="charger_contact_2" type="contact">
-          <always_on>true</always_on>
-          <update_rate>20</update_rate>
-          <contact>
-            <collision>pad_col</collision>
-          </contact>
-        </sensor>
       </link>
     </model>
 
