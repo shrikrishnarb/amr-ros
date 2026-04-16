@@ -1,0 +1,80 @@
+<!--
+  navigate_w_recovery.xml
+  =======================
+  Behaviour Tree for Nav2 navigate_to_pose with CONTINUOUS global replanning.
+
+  Key design
+  ----------
+  RateController hz="2.0" around ComputePathToPose:
+    The global path is recomputed every 0.5 s throughout navigation, not just
+    once when the goal is assigned.  This makes every robot a true dynamic
+    obstacle: as soon as its LiDAR reading updates the costmap the global
+    planner finds a new route around it.  This is the fix for two (or more)
+    AMRs blocking each other: instead of stopping and waiting for a full
+    failure/recovery cycle they continuously re-route in real time.
+
+  PipelineSequence (replaces plain Sequence):
+    Allows ComputePathToPose to tick on its own schedule (via RateController)
+    while FollowPath continues executing concurrently.  The robot keeps moving
+    on the current path while a fresh path is being computed.
+
+  Recovery chain (RoundRobin, up to 6 outer retries):
+    1. Clear both costmaps  — flushes stale/phantom obstacle marks
+    2. Spin 90 deg          — gathers fresh 360 scan; helps AMCL re-localise
+    3. Wait 3 s             — gives a blocking dynamic obstacle time to move
+    4. BackUp 0.30 m        — unsticks robot if it is touching an obstacle
+-->
+<root main_tree_to_execute="MainTree">
+  <BehaviorTree ID="MainTree">
+
+    <!-- 6 full-pipeline retries before declaring the goal unreachable -->
+    <RecoveryNode number_of_retries="6" name="NavigateRecovery">
+
+      <!-- Normal navigation: replan globally at 2 Hz while DWB follows -->
+      <PipelineSequence name="NavigateWithReplanning">
+
+        <!-- Global path recomputed every 2 s to track dynamic obstacles.
+             0.5 Hz leaves enough CPU budget for two simultaneous BT stacks. -->
+        <RateController hz="0.5" name="PlannerRate">
+          <RecoveryNode number_of_retries="1" name="ComputePathRecovery">
+            <ComputePathToPose goal="{goal}" path="{path}" planner_id="GridBased"/>
+            <!-- If global planner fails, clear global costmap once and retry -->
+            <ClearEntireCostmap name="ClearGlobalCostmap-Context"
+              service_name="global_costmap/clear_entirely_global_costmap"/>
+          </RecoveryNode>
+        </RateController>
+
+        <!-- DWB local planner follows the continuously updated path -->
+        <RecoveryNode number_of_retries="1" name="FollowPathRecovery">
+          <FollowPath path="{path}" controller_id="FollowPath"/>
+          <!-- If DWB fails, clear local costmap (removes stale marks) and retry -->
+          <ClearEntireCostmap name="ClearLocalCostmap-Context"
+            service_name="local_costmap/clear_entirely_local_costmap"/>
+        </RecoveryNode>
+
+      </PipelineSequence>
+
+      <!-- Recovery when the full pipeline fails -->
+      <ReactiveFallback name="RecoveryFallback">
+        <!-- Goal updated externally: skip recovery, re-run immediately -->
+        <GoalUpdated/>
+        <RoundRobin name="RecoveryActions">
+          <!-- 1. Clear both costmaps: removes stale/phantom obstacles -->
+          <Sequence name="ClearCostmaps">
+            <ClearEntireCostmap name="ClearLocal-Recovery"
+              service_name="local_costmap/clear_entirely_local_costmap"/>
+            <ClearEntireCostmap name="ClearGlobal-Recovery"
+              service_name="global_costmap/clear_entirely_global_costmap"/>
+          </Sequence>
+          <!-- 2. Spin: fresh 360 scan + AMCL re-convergence -->
+          <Spin spin_dist="1.57"/>
+          <!-- 3. Wait: dynamic obstacle may clear the path on its own -->
+          <Wait wait_duration="3.0"/>
+          <!-- 4. BackUp: unstick from close obstacle -->
+          <BackUp backup_dist="0.30" backup_speed="0.05"/>
+        </RoundRobin>
+      </ReactiveFallback>
+
+    </RecoveryNode>
+  </BehaviorTree>
+</root>
