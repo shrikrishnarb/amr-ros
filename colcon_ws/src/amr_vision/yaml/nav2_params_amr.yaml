@@ -1,0 +1,368 @@
+# nav2_params_amr.yaml
+#
+# Nav2 parameter template for the AMR fleet simulation.
+# The literal string  {NS}  is replaced at launch time with the robot's
+# namespace (e.g. "agv1", "agv2").  All frame IDs that must be robot-specific
+# carry the {NS}/ prefix.  Shared frames (map) are left as-is.
+#
+# Robot specs (from amr.urdf.xacro):
+#   Wheel separation: 0.35 m   Wheel diameter: 0.10 m
+#   Chassis:          0.30 x 0.30 m   →  robot_radius: 0.30 m
+#   Max linear vel:   0.50 m/s        Max angular vel: 1.0 rad/s
+#   LiDAR:            720 beams, ±90°, 30 m range
+#
+# TF chain expected by Nav2:
+#   map  →  {NS}/odom  (AMCL)  →  {NS}/base_footprint  (odom_sim_filter)
+#       →  {NS}/base_link  →  {NS}/lidar_link  (robot_state_publisher)
+
+# ---------------------------------------------------------------------------
+# AMCL — Monte-Carlo localisation against the pre-built map
+# ---------------------------------------------------------------------------
+amcl:
+  ros__parameters:
+    use_sim_time: True
+    # Motion model noise (differential drive)
+    alpha1: 0.2
+    alpha2: 0.2
+    alpha3: 0.2
+    alpha4: 0.2
+    alpha5: 0.2
+    # Frames
+    base_frame_id: "{NS}/base_footprint"
+    odom_frame_id: "{NS}/odom"
+    global_frame_id: "map"
+    # Laser model
+    scan_topic: scan          # relative → /{NS}/scan
+    laser_model_type: "likelihood_field"
+    laser_likelihood_max_dist: 2.0
+    laser_max_range: 30.0
+    laser_min_range: -1.0
+    max_beams: 60
+    beam_skip_distance: 0.5
+    beam_skip_error_threshold: 0.9
+    beam_skip_threshold: 0.3
+    do_beamskip: false
+    # Particle filter
+    max_particles: 2000
+    min_particles: 500
+    pf_err: 0.05
+    pf_z: 0.99
+    resample_interval: 1
+    # Odometry model
+    robot_model_type: "nav2_amcl::DifferentialMotionModel"
+    # Update thresholds
+    update_min_a: 0.2
+    update_min_d: 0.25
+    # Noise weights
+    z_hit: 0.5
+    z_max: 0.05
+    z_rand: 0.5
+    z_short: 0.05
+    sigma_hit: 0.2
+    lambda_short: 0.1
+    # Recovery
+    recovery_alpha_fast: 0.0
+    recovery_alpha_slow: 0.0
+    # Misc
+    save_pose_rate: 0.5
+    tf_broadcast: true
+    transform_tolerance: 1.0
+    set_initial_pose: false
+    always_reset_initial_pose: false
+    first_map_only: false
+
+# ---------------------------------------------------------------------------
+# BT Navigator — orchestrates the navigation behaviour tree
+# ---------------------------------------------------------------------------
+bt_navigator:
+  ros__parameters:
+    use_sim_time: True
+    global_frame: map
+    robot_base_frame: "{NS}/base_footprint"
+    odom_topic: odom          # relative → /{NS}/odom
+    # bt_loop_duration: tick period in ms.  50 ms = 20 Hz is realistic for a
+    # multi-robot container (saves CPU vs the default 20 ms / 50 Hz).
+    bt_loop_duration: 50
+    # default_server_timeout: max ms to wait for an action server to acknowledge
+    # a goal.  Under dual-robot CPU load the planner takes > 20 ms to ACK;
+    # increasing to 1000 ms prevents false "timed out" failures.
+    default_server_timeout: 1000
+    default_nav_to_pose_bt_xml: "{BT_FILE}"
+    wait_for_service_timeout: 1000
+    action_server_result_timeout: 900.0
+    navigators: ['navigate_to_pose', 'navigate_through_poses']
+    navigate_to_pose:
+      plugin: "nav2_bt_navigator/NavigateToPoseNavigator"
+    navigate_through_poses:
+      plugin: "nav2_bt_navigator/NavigateThroughPosesNavigator"
+    error_code_names:
+      - compute_path_error_code
+      - follow_path_error_code
+
+# ---------------------------------------------------------------------------
+# Controller Server — DWB local planner for differential drive
+# ---------------------------------------------------------------------------
+controller_server:
+  ros__parameters:
+    use_sim_time: True
+    # 3 Hz (333 ms window) instead of 5 Hz gives DWB enough time to finish
+    # its trajectory search under dual-robot CPU load.
+    controller_frequency: 3.0
+    min_x_velocity_threshold: 0.001
+    min_y_velocity_threshold: 0.001
+    min_theta_velocity_threshold: 0.001
+    failure_tolerance: 0.3
+    progress_checker_plugin: "progress_checker"
+    goal_checker_plugins: ["general_goal_checker"]
+    controller_plugins: ["FollowPath"]
+
+    progress_checker:
+      plugin: "nav2_controller::SimpleProgressChecker"
+      required_movement_radius: 0.5
+      movement_time_allowance: 10.0
+
+    general_goal_checker:
+      stateful: True
+      plugin: "nav2_controller::SimpleGoalChecker"
+      xy_goal_tolerance: 0.25
+      yaw_goal_tolerance: 0.25
+
+    # DWB — tuned for warehouse AGV speeds
+    FollowPath:
+      plugin: "dwb_core::DWBLocalPlanner"
+      debug_trajectory_details: True
+      min_vel_x: 0.0
+      min_vel_y: 0.0
+      max_vel_x: 0.50
+      max_vel_y: 0.0
+      max_vel_theta: 1.0
+      min_speed_xy: 0.0
+      max_speed_xy: 0.50
+      min_speed_theta: 0.0
+      acc_lim_x: 2.5
+      acc_lim_y: 0.0
+      acc_lim_theta: 3.2
+      decel_lim_x: -2.5
+      decel_lim_y: 0.0
+      decel_lim_theta: -3.2
+      # Reduced sample counts: 5×1×10 = 50 trajectories vs original 1000.
+      # Keeps DWB within the 333 ms control budget for two simultaneous robots.
+      vx_samples: 5
+      vy_samples: 1
+      vtheta_samples: 10
+      sim_time: 1.0
+      linear_granularity: 0.05
+      angular_granularity: 0.025
+      transform_tolerance: 1.0
+      xy_goal_tolerance: 0.25
+      trans_stopped_velocity: 0.25
+      short_circuit_trajectory_evaluation: True
+      stateful: True
+      critics:
+        - "RotateToGoal"
+        - "Oscillation"
+        - "ObstacleFootprint"
+        - "GoalAlign"
+        - "PathAlign"
+        - "PathDist"
+        - "GoalDist"
+      ObstacleFootprint.scale: 1.0
+      PathAlign.scale: 32.0
+      PathAlign.forward_point_distance: 0.1
+      GoalAlign.scale: 24.0
+      GoalAlign.forward_point_distance: 0.1
+      PathDist.scale: 32.0
+      GoalDist.scale: 24.0
+      RotateToGoal.scale: 32.0
+      RotateToGoal.slowing_factor: 5.0
+      RotateToGoal.lookahead_time: -1.0
+
+# ---------------------------------------------------------------------------
+# Local Costmap — rolling window around the robot
+# ---------------------------------------------------------------------------
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      use_sim_time: True
+      update_frequency: 5.0
+      publish_frequency: 2.0
+      global_frame: "{NS}/odom"
+      robot_base_frame: "{NS}/base_footprint"
+      rolling_window: true
+      width: 6
+      height: 6
+      resolution: 0.05
+      robot_radius: 0.30
+      transform_tolerance: 1.0
+      plugins: ["obstacle_layer", "inflation_layer"]
+
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: True
+        observation_sources: scan
+        scan:
+          topic: /{NS}/scan
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+          raytrace_max_range: 5.0
+          raytrace_min_range: 0.0
+          obstacle_max_range: 4.5
+          obstacle_min_range: 0.0
+
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.70
+
+      always_send_full_costmap: True
+
+# ---------------------------------------------------------------------------
+# Global Costmap — full map for long-range path planning
+# ---------------------------------------------------------------------------
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      use_sim_time: True
+      # 2 Hz update: obstacles visible within 0.5 s — good enough for dynamic
+      # avoidance while keeping CPU load manageable for 2 robots.
+      update_frequency: 2.0
+      publish_frequency: 1.0
+      global_frame: map
+      robot_base_frame: "{NS}/base_footprint"
+      robot_radius: 0.30
+      resolution: 0.05
+      track_unknown_space: true
+      transform_tolerance: 1.0
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: True
+
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: True
+        observation_sources: scan
+        scan:
+          topic: /{NS}/scan
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+          raytrace_max_range: 5.0
+          raytrace_min_range: 0.0
+          obstacle_max_range: 4.5
+          obstacle_min_range: 0.0
+        # Dynamic obstacles (other robots) decay from the global costmap after
+        # 3 s so that a moved robot does not leave a permanent phantom obstacle.
+        decay_time: 3.0
+
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.70
+
+      always_send_full_costmap: True
+
+# ---------------------------------------------------------------------------
+# Planner Server — NavFn global path planner
+# ---------------------------------------------------------------------------
+planner_server:
+  ros__parameters:
+    use_sim_time: True
+    expected_planner_frequency: 5.0
+    planner_plugins: ["GridBased"]
+    GridBased:
+      plugin: "nav2_navfn_planner/NavfnPlanner"
+      tolerance: 0.5
+      use_astar: false
+      allow_unknown: true
+
+# ---------------------------------------------------------------------------
+# Smoother Server
+# ---------------------------------------------------------------------------
+smoother_server:
+  ros__parameters:
+    use_sim_time: True
+    smoother_plugins: ["simple_smoother"]
+    simple_smoother:
+      plugin: "nav2_smoother::SimpleSmoother"
+      tolerance: 1.0e-10
+      max_its: 1000
+      do_refinement: True
+
+# ---------------------------------------------------------------------------
+# Behavior Server — recovery behaviours (spin, backup, wait)
+# ---------------------------------------------------------------------------
+behavior_server:
+  ros__parameters:
+    use_sim_time: True
+    costmap_topic: local_costmap/costmap_raw
+    footprint_topic: local_costmap/published_footprint
+    cycle_frequency: 10.0
+    behavior_plugins: ["spin", "backup", "drive_on_heading", "wait"]
+    spin:
+      plugin: "nav2_behaviors/Spin"
+    backup:
+      plugin: "nav2_behaviors/BackUp"
+    drive_on_heading:
+      plugin: "nav2_behaviors/DriveOnHeading"
+    wait:
+      plugin: "nav2_behaviors/Wait"
+    global_frame: "{NS}/odom"
+    robot_base_frame: "{NS}/base_footprint"
+    transform_tolerance: 0.1
+    simulate_ahead_time: 2.0
+    max_rotational_vel: 1.0
+    min_rotational_vel: 0.4
+    rotational_acc_lim: 3.2
+
+# ---------------------------------------------------------------------------
+# Waypoint Follower (part of nav2_bringup managed nodes)
+# ---------------------------------------------------------------------------
+waypoint_follower:
+  ros__parameters:
+    use_sim_time: True
+    loop_rate: 20
+    stop_on_failure: false
+    waypoint_task_executor_plugin: "wait_at_waypoint"
+    wait_at_waypoint:
+      plugin: "nav2_waypoint_follower::WaitAtWaypoint"
+      enabled: True
+      waypoint_pause_duration: 200
+
+# ---------------------------------------------------------------------------
+# Velocity Smoother — smooths cmd_vel before publishing to the robot
+# ---------------------------------------------------------------------------
+velocity_smoother:
+  ros__parameters:
+    use_sim_time: True
+    smoothing_frequency: 5.0
+    scale_velocities: False
+    feedback: "OPEN_LOOP"
+    max_velocity: [0.50, 0.0, 1.0]
+    min_velocity: [-0.50, 0.0, -1.0]
+    max_accel: [2.5, 0.0, 3.2]
+    max_decel: [-2.5, 0.0, -3.2]
+    odom_topic: odom            # relative → /{NS}/odom
+    odom_duration: 0.1
+    deadband_velocity: [0.0, 0.0, 0.0]
+    velocity_timeout: 1.0
+
+# ---------------------------------------------------------------------------
+# Map Server & Map Saver (lifecycle-managed by nav2_bringup)
+# ---------------------------------------------------------------------------
+map_server:
+  ros__parameters:
+    use_sim_time: True
+    yaml_filename: ""           # overridden in launch file via launch_arguments
+
+map_saver:
+  ros__parameters:
+    use_sim_time: True
+    save_map_timeout: 5.0
+    free_thresh_default: 0.25
+    occupied_thresh_default: 0.65
+    map_subscribe_transient_local: True
