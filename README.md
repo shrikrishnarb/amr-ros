@@ -214,6 +214,53 @@ colcon test-result --verbose
 
 ---
 
+## AI / Perception Layer
+
+The `amr_vision` package extends the base AMR fleet with a dual-perception stack: the
+existing LiDAR pipeline (from `amr_description`) handles low-level safety, while a
+YOLO-based camera node adds semantic awareness — enabling the fleet to respond
+differently based on *what* is detected, not just *that* something is there.
+
+### Architecture
+
+```
+Camera (Gazebo sensor)    │
+          ▼
+camera_detection_node ──► /{ns}/camera/detections (full JSON)
+(YOLOv8n, 5Hz)        ──► /{ns}/camera/obstacle_semantic (clear/person/pallet)
+          │
+          ▼
+fleet_manager_ai (semantic-conditional FSM)
+```
+
+### Semantic Decision Table
+
+| Detected Class | Fleet Response |
+|---|---|
+| `person` | Cancel Nav2 goal, stop in place, wait for clear signal |
+| `pallet` | Reduce speed to 0.1 m/s, allow Nav2 dynamic costmap to reroute |
+| `clear` | Resume normal speed and navigation goal |
+
+### Launching the AI Fleet
+
+```bash
+ros2 launch amr_vision amr_vision_fleet.launch.py \
+    num_agvs:=2 \
+    launch_gazebo:=true \
+    spawn_poses:="0.0,0.0;2.0,2.0"
+```
+
+### Notes on the Model
+
+YOLOv8n (COCO pretrained) is used in simulation. COCO class `person` maps directly;
+`suitcase` is used as a pallet proxy for simulation purposes. A production deployment
+would use a domain-specific model fine-tuned on warehouse objects, exported to ONNX
+and optimized with TensorRT for edge hardware — the same pipeline used in the
+[edge-vision-inspector](../edge-vision-inspector) project and validated on
+NVIDIA Jetson Orin AGX.
+
+---
+
 ## Project Evolution
 
 See [CHANGELOG.md](CHANGELOG.md) for the full story of how this project grew from a keyboard-controlled robot to an autonomous multi-robot fleet — including every major feature added and the problems solved along the way.
