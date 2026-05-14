@@ -235,10 +235,14 @@ class FleetManagerAI(Node):
     def _handle_semantic_change(self, ns: str, semantic: str) -> None:
         """Apply semantic-aware navigation behavior on top of the existing FSM.
 
-        Only acts when the robot is actively navigating (TO_PICKUP / TO_DROPOFF).
-        All other FSM states are left unaffected.
+        Always logs the semantic update; only applies stop/slow/resume behavior
+        during active navigation (TO_PICKUP / TO_DROPOFF).
         """
+        import sys
         agv = self.agv[ns]
+
+        print(f"[FleetAI] {ns}: semantic update → {semantic} (state={agv.state})", flush=True)
+        self.get_logger().info(f"[FleetAI] {ns}: semantic update → {semantic} (state={agv.state})")
 
         # Semantic layer only applies during active navigation
         if agv.state not in ("TO_PICKUP", "TO_DROPOFF"):
@@ -248,9 +252,9 @@ class FleetManagerAI(Node):
             # Cancel Nav2 goal and stop the robot
             agv.semantic_stop_active = True
             self._cancel_nav_goal(ns)
-            self.get_logger().warn(
-                f"[FleetAI] {ns}: PERSON detected — STOPPING for safety"
-            )
+            msg = f"[FleetAI] {ns}: PERSON detected — STOPPING for safety"
+            self.get_logger().warn(msg)
+            print(msg, flush=True)
 
         elif semantic == "pallet":
             # Do NOT cancel the Nav2 goal — let Nav2 reroute via dynamic costmap.
@@ -259,16 +263,16 @@ class FleetManagerAI(Node):
             slow_twist.linear.x = 0.1    # m/s — reduced from normal navigation speed
             slow_twist.angular.z = 0.0
             self.cmd_vel_pub[ns].publish(slow_twist)
-            self.get_logger().info(
-                f"[FleetAI] {ns}: PALLET detected — slowing, Nav2 will reroute"
-            )
+            msg = f"[FleetAI] {ns}: PALLET detected — slowing, Nav2 will reroute"
+            self.get_logger().info(msg)
+            print(msg, flush=True)
 
         elif semantic == "clear" and agv.semantic_stop_active:
             # Path is clear again — lift the stop and re-send the last goal
             agv.semantic_stop_active = False
-            self.get_logger().info(
-                f"[FleetAI] {ns}: path clear — resuming navigation"
-            )
+            msg = f"[FleetAI] {ns}: path clear — resuming navigation"
+            self.get_logger().info(msg)
+            print(msg, flush=True)
             if agv.last_nav_goal is not None:
                 # Refresh the stamp so nav2_goal_bridge treats it as a new goal
                 agv.last_nav_goal.header.stamp = self.get_clock().now().to_msg()
@@ -306,20 +310,30 @@ class FleetManagerAI(Node):
 
     def _log_fleet_status(self) -> None:
         """Log fleet state including semantic information every 5 s."""
+        import sys
+        import time as _time
+        with open("/tmp/fleet_status_test.log", "a") as _f:
+            _f.write(f"timer fired {_time.time()}\n")
+            _f.flush()
         for ns in self.ns_list:
             agv = self.agv[ns]
             safety_tag = "| STOPPED_FOR_SAFETY" if agv.semantic_stop_active else "| nominal"
-            self.get_logger().info(
+            msg = (
                 f"[FleetAI] {ns}: {agv.state} "
                 f"| semantic={agv.semantic_obstacle} "
                 f"{safety_tag}"
             )
+            self.get_logger().info(msg)
+            print(msg, flush=True)
 
     # ====================================================================
     # Main control loop — identical to fleet_manager
     # ====================================================================
 
     def step(self) -> None:
+        import time as _t
+        with open("/tmp/fleet_step_test.log", "a") as _f:
+            _f.write(f"step {_t.time()}\n")
         for ns in self.ns_list:
             self.run_agv(ns)
         self.assign_tasks()

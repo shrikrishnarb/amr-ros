@@ -18,12 +18,19 @@ import threading
 import time
 from typing import Optional
 
-import numpy as np
 import rclpy
-from cv_bridge import CvBridge
 from rclpy.node import Node
 from sensor_msgs.msg import Image
 from std_msgs.msg import String
+
+try:
+    import numpy as np
+    from cv_bridge import CvBridge
+    _CV_BRIDGE_AVAILABLE = True
+except Exception:  # noqa: BLE001
+    np = None  # type: ignore[assignment]
+    CvBridge = None  # type: ignore[assignment,misc]
+    _CV_BRIDGE_AVAILABLE = False
 
 try:
     from ultralytics import YOLO
@@ -102,7 +109,12 @@ class CameraDetectionNode(Node):
         # ------------------------------------------------------------------
         # CV bridge and threading state
         # ------------------------------------------------------------------
-        self._bridge: CvBridge = CvBridge()
+        if not _CV_BRIDGE_AVAILABLE:
+            self.get_logger().warn(
+                "cv_bridge unavailable (NumPy ABI mismatch) — "
+                "running in heartbeat-only mode, no image inference."
+            )
+        self._bridge = CvBridge() if _CV_BRIDGE_AVAILABLE else None
         self._inference_lock: threading.Lock = threading.Lock()
 
         # Rate limiting — process at most 5 frames per second
@@ -111,6 +123,9 @@ class CameraDetectionNode(Node):
 
         # Track last published semantic to suppress redundant INFO logs
         self._last_semantic: str = "clear"
+
+        # Track when the last image arrived (for heartbeat idle publishing)
+        self._last_image_time: float = 0.0
 
         # ------------------------------------------------------------------
         # Publishers
@@ -132,6 +147,10 @@ class CameraDetectionNode(Node):
             10,
         )
 
+        # Heartbeat timer — publishes "clear" / empty detections at 1 Hz when no
+        # image_raw messages arrive (e.g. fleet-only mode without a camera simulator).
+        self.create_timer(1.0, self._heartbeat_callback)
+
         self.get_logger().info(
             f"CameraDetectionNode ready | ns={self._ns} | model={model_path}"
         )
@@ -140,12 +159,31 @@ class CameraDetectionNode(Node):
     # ROS callbacks
     # ------------------------------------------------------------------
 
+    def _heartbeat_callback(self) -> None:
+        """Publish 'clear' and empty detections when no camera images have arrived recently."""
+        if time.time() - self._last_image_time < 2.0:
+            return
+        payload = {
+            "timestamp": time.time(),
+            "detections": [],
+            "inference_ms": 0.0,
+            "frame_id": f"{self._ns}/camera_link",
+        }
+        det_msg = String()
+        det_msg.data = json.dumps(payload)
+        self._detections_pub.publish(det_msg)
+
+        sem_msg = String()
+        sem_msg.data = "clear"
+        self._semantic_pub.publish(sem_msg)
+
     def _image_callback(self, msg: Image) -> None:
         """Receive a camera frame; rate-limit and dispatch inference to a thread."""
         now = time.time()
+        self._last_image_time = now
         if now - self._last_inference_time < self._min_interval:
             return
-        if self._model is None:
+        if self._model is None or not _CV_BRIDGE_AVAILABLE:
             return
 
         threading.Thread(
@@ -168,7 +206,7 @@ class CameraDetectionNode(Node):
 
         try:
             # Convert ROS Image to BGR numpy array
-            cv_image: np.ndarray = self._bridge.imgmsg_to_cv2(msg, "bgr8")
+            cv_image = self._bridge.imgmsg_to_cv2(msg, "bgr8")
 
             # Run YOLO inference
             start: float = time.perf_counter()

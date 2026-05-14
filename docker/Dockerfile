@@ -2,6 +2,9 @@
 FROM ros:humble-ros-base-jammy
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV LIBGL_ALWAYS_SOFTWARE=1
+ENV MESA_GL_VERSION_OVERRIDE=3.3
+ENV DISPLAY=:0
 
 # Base tools + ROS dev tools + GUI bits
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -30,6 +33,31 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-humble-joint-state-publisher \
  && rm -rf /var/lib/apt/lists/*
 
+# ---- Fix transforms3d NumPy incompatibility (np.float removed in NumPy 1.24+) ----
+RUN python3 -c "
+import pathlib
+path = pathlib.Path('/usr/lib/python3/dist-packages/transforms3d/quaternions.py')
+if path.exists():
+    content = path.read_text()
+    content = content.replace(
+        '_MAX_FLOAT = np.maximum_sctype(np.float)',
+        '_MAX_FLOAT = np.finfo(np.float64).max'
+    )
+    path.write_text(content)
+    print('transforms3d patch applied')
+else:
+    print('transforms3d not found at expected path, skipping patch')
+"
+
+# ---- Install ultralytics and pin NumPy compatible with both ultralytics and transforms3d ----
+# NumPy 1.24+ removes np.float which breaks transforms3d; pin below 1.24 as primary fix,
+# the file patch above is a safety net.
+RUN pip3 install --no-cache-dir \
+    "numpy>=1.21,<1.24" \
+    ultralytics \
+    && python3 -c "import ultralytics; print('ultralytics OK')" \
+    && python3 -c "from tf_transformations import euler_from_quaternion; print('tf_transformations OK')"
+
 # ---- rosdep (install deps declared in package.xml) ----
 # Copy only manifests to leverage Docker layer caching
 WORKDIR /tmp/manifests
@@ -54,5 +82,14 @@ RUN mkdir -p src
 # Entry point
 COPY docker/ros_entrypoint.sh /ros_entrypoint.sh
 RUN chmod +x /ros_entrypoint.sh
+
+# ---- Verify all critical dependencies installed correctly ----
+RUN python3 -c "
+import numpy; print(f'NumPy {numpy.__version__} OK')
+import ultralytics; print('ultralytics OK')
+from tf_transformations import euler_from_quaternion; print('tf_transformations OK')
+import transforms3d; print('transforms3d OK')
+"
+
 ENTRYPOINT ["/ros_entrypoint.sh"]
 CMD ["bash"]

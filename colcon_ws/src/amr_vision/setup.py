@@ -44,6 +44,7 @@ setup(
             'obstacle_detection_node = amr_vision.obstacle_detection_node:main',
             'battery_sim = amr_vision.battery_sim:main',
             'charger_dock_monitor = amr_vision.charger_dock_monitor:main',
+            'camera_tf_broadcaster = amr_vision.camera_tf_broadcaster:main',
         ],
     },
 )

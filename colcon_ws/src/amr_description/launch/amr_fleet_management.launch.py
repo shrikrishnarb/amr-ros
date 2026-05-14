@@ -37,6 +37,7 @@ from launch.actions import (
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 
 
 def launch_setup(context, *args, **kwargs):
@@ -107,7 +108,7 @@ def launch_setup(context, *args, **kwargs):
                 name='robot_state_publisher',
                 namespace=ns,
                 parameters=[{
-                    'robot_description': Command(['xacro ', xacro_path, f' namespace:={ns}']),
+                    'robot_description': ParameterValue(Command(['xacro ', xacro_path, f' namespace:={ns}']), value_type=str),
                     'use_sim_time': True,
                 }],
                 remappings=[('/tf', 'tf'), ('/tf_static', 'tf_static')],

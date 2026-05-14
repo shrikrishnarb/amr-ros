@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 
+import numpy as np
+if not hasattr(np, 'float'):
+    np.float = np.float64
+if not hasattr(np, 'maximum_sctype'):
+    np.maximum_sctype = lambda t: np.float64
+
 from copy import deepcopy
 from math import cos, sin
 
-import numpy as np
 import rclpy
 import rclpy.logging
 from geometry_msgs.msg import Point, Quaternion, TransformStamped, Twist

@@ -10,15 +10,19 @@ services:
     tty: true                        # keep TTY open (like `-t`)
     stdin_open: true                 # keep STDIN open (like `-i`)
     environment:
-      - DISPLAY=${DISPLAY}
+      - DISPLAY=${DISPLAY:-:0}
       - QT_X11_NO_MITSHM=1
-      - LIBGL_ALWAYS_INDIRECT=0
+      - LIBGL_ALWAYS_SOFTWARE=1
+      - MESA_GL_VERSION_OVERRIDE=3.3
       - UID=${UID:-1000}
       - GID=${GID:-1000}
     volumes:
       - ../:/workspace:rw
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /mnt/wslg:/mnt/wslg:ro       # helpful on WSLg; harmless elsewhere
+    # Remove /dev/dri if running in VirtualBox without 3D acceleration
+    devices:
+      - /dev/dri:/dev/dri
     command: bash                    # PID 1 stays interactive
 
   # GPU profile — DIFFERENT name to avoid collisions

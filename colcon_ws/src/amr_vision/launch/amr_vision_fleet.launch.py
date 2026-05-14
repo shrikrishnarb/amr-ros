@@ -39,6 +39,7 @@ from launch.actions import (
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, LaunchConfiguration
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 
 
 def launch_setup(context, *args, **kwargs):
@@ -110,7 +111,7 @@ def launch_setup(context, *args, **kwargs):
                 name='robot_state_publisher',
                 namespace=ns,
                 parameters=[{
-                    'robot_description': Command(['xacro ', xacro_path, f' namespace:={ns}']),
+                    'robot_description': ParameterValue(Command(['xacro ', xacro_path, f' namespace:={ns}']), value_type=str),
                     'use_sim_time': True,
                 }],
                 remappings=[('/tf', 'tf'), ('/tf_static', 'tf_static')],
@@ -179,19 +180,45 @@ def launch_setup(context, *args, **kwargs):
                 emulate_tty=True,
             ))
 
-            # CHANGE B: camera_detection_node — one per robot, standalone mode only
+
+    # -----------------------------------------------------------------------
+    # Fleet-only mode: dynamic camera TF broadcaster (base_link → camera_link).
+    # Publishes to /tf at 10 Hz (VOLATILE QoS) — works reliably with or without
+    # SHM transport, unlike static_transform_publisher (TRANSIENT_LOCAL /tf_static).
+    # In standalone mode robot_state_publisher handles this via the URDF.
+    # -----------------------------------------------------------------------
+    if not launch_gazebo:
+        for ns in robot_namespaces:
             nodes.append(Node(
                 package='amr_vision',
-                executable='camera_detection_node',
-                name=f'camera_detection_node_{ns}',
+                executable='camera_tf_broadcaster',
+                name=f'camera_tf_broadcaster_{ns}',
                 parameters=[{
-                    'namespace': ns,
-                    'model_path': model_path,
-                    'conf_threshold': 0.35,
+                    'use_sim_time': False,  # no /clock in fleet-only mode
+                    'robot_namespace': ns,
                 }],
                 output='screen',
                 emulate_tty=True,
             ))
+
+    # -----------------------------------------------------------------------
+    # Per-robot camera_detection_node — one per robot, both modes.
+    # In fleet-only mode (no Gazebo) the node idles and publishes periodic
+    # "clear" / empty-detections heartbeats until real camera frames arrive.
+    # -----------------------------------------------------------------------
+    for ns in robot_namespaces:
+        nodes.append(Node(
+            package='amr_vision',
+            executable='camera_detection_node',
+            name=f'camera_detection_node_{ns}',
+            parameters=[{
+                'namespace': ns,
+                'model_path': model_path,
+                'conf_threshold': 0.35,
+            }],
+            output='screen',
+            emulate_tty=True,
+        ))
 
     # -----------------------------------------------------------------------
     # Per-robot TF relay — bridges global /tf and /tf_static to /{ns}/tf and

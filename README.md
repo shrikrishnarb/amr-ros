@@ -91,12 +91,34 @@ git clone https://github.com/shrikrishnarb/amr-ros.git
 cd amr-ros
 ```
 
-### 2. Enable X11 (for Gazebo / RViz GUI)
+### 2. Enable Gazebo GUI (required for Gazebo window on host display)
+
+Run this on your HOST machine (not inside the container) before starting Docker:
 
 ```bash
 sudo apt-get install x11-xserver-utils   # host only — skip if already installed
 xhost +local:root
 ```
+
+This allows the Docker container to open GUI windows on your display.
+You need to run this once per host session (after each reboot or logout).
+
+**VirtualBox users:** If Gazebo crashes or shows a black screen,
+enable software rendering by adding this to your shell before
+running docker compose:
+
+```bash
+export LIBGL_ALWAYS_SOFTWARE=1
+```
+
+Or run Gazebo with software rendering explicitly:
+
+```bash
+LIBGL_ALWAYS_SOFTWARE=1 ros2 launch amr_description display.launch.py namespace:=agv1
+```
+
+This is already set inside the Docker container automatically.
+The export is only needed if you run ROS2 directly on the host.
 
 ### 3. Build and start the container
 
@@ -116,6 +138,47 @@ source /workspace/colcon_ws/install/setup.bash
 ```
 
 > After editing Python nodes, a rebuild is not needed (symlink install). Rebuild only when `setup.py` changes (new entry points or data files).
+
+---
+
+## Troubleshooting Common Errors
+
+**gzclient crashes with exit code -6**
+This is a graphics driver issue in VirtualBox. The simulation still
+runs on gzserver — only the GUI window fails. To fix:
+```bash
+xhost +local:root          # run on host before starting Docker
+```
+If it still crashes, software rendering is already enabled inside
+the container via `LIBGL_ALWAYS_SOFTWARE=1`. Restart the container:
+```bash
+docker compose down && docker compose up -d
+```
+
+**odom_sim_filter crashes with NumPy AttributeError**
+This is a NumPy version incompatibility with the system transforms3d
+package. It is fixed automatically in the Docker image build. If you
+see this error it means you are not using the Docker environment.
+Always run everything inside the container:
+```bash
+docker exec -it amr-ros-dev bash
+```
+
+**Authorization required, but no authorization protocol specified**
+Run on your host machine before starting Docker:
+```bash
+xhost +local:root
+```
+
+**No module named ultralytics**
+ultralytics is pre-installed in the Docker image. If you see this
+error the image was built from an older version before this fix.
+Rebuild the image:
+```bash
+docker compose down
+docker compose build --no-cache
+docker compose up -d
+```
 
 ---
 

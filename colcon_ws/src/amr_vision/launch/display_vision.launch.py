@@ -4,6 +4,7 @@ from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, Command
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
 import os
 from ament_index_python.packages import get_package_share_directory
@@ -111,7 +112,7 @@ def generate_launch_description():
             name='robot_state_publisher',
             output='screen',
             parameters=[
-                {'robot_description': robot_description},
+                {'robot_description': ParameterValue(robot_description, value_type=str)},
                 {'use_sim_time': True}
             ]
         ),
