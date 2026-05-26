@@ -327,9 +327,3 @@ NVIDIA Jetson Orin AGX.
 ## Project Evolution
 
 See [CHANGELOG.md](CHANGELOG.md) for the full story of how this project grew from a keyboard-controlled robot to an autonomous multi-robot fleet — including every major feature added and the problems solved along the way.
-
----
-
-## AI Usage
-
-AI tools (Claude Code) were used for debugging Nav2 integration, fixing TF namespace mismatches, tuning navigation parameters, and writing documentation. All core logic (fleet FSM, Nav2 parameter design, task YAML schema, obstacle avoidance architecture) was designed and implemented by the project author.
