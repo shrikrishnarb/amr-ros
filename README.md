@@ -318,12 +318,12 @@ ros2 launch amr_vision amr_vision_fleet.launch.py \
 YOLOv8n (COCO pretrained) is used in simulation. COCO class `person` maps directly;
 `suitcase` is used as a pallet proxy for simulation purposes. A production deployment
 would use a domain-specific model fine-tuned on warehouse objects, exported to ONNX
-and optimized with TensorRT for edge hardware — the same pipeline used in the
-[edge-vision-inspector](../edge-vision-inspector) project and validated on
+and optimized with TensorRT for edge hardware with the same pipeline used in the
+[edge-vision-inspector](https://github.com/shrikrishnarb/edge-vision-inspector) project and validated on
 NVIDIA Jetson Orin AGX.
 
 ---
 
 ## Project Evolution
 
-See [CHANGELOG.md](CHANGELOG.md) for the full story of how this project grew from a keyboard-controlled robot to an autonomous multi-robot fleet — including every major feature added and the problems solved along the way.
+See [CHANGELOG.md](CHANGELOG.md) for the full story of how this project grew from a keyboard-controlled robot to an autonomous multi-robot fleet including every major feature added and the problems solved along the way.
