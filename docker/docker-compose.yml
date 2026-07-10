@@ -25,6 +25,45 @@ services:
       - /dev/dri:/dev/dri
     command: bash                    # PID 1 stays interactive
 
+  # Gazebo Harmonic stack (new packages: amr_butler_description, amr_worlds,
+  # amr_concierge). Separate image because the Harmonic ros_gz binaries conflict
+  # with the Classic gazebo-ros packages. Shares the same /workspace volume as
+  # amr-ros-dev; both services can be up simultaneously (distinct container
+  # names, and host networking means there are no port mappings to collide).
+  amr-butler-dev:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.butler
+    image: amr-butler-dev:humble-harmonic
+    container_name: amr-butler-dev
+    network_mode: host
+    tty: true
+    stdin_open: true
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+      - QT_X11_NO_MITSHM=1
+      - LIBGL_ALWAYS_SOFTWARE=1
+      - MESA_GL_VERSION_OVERRIDE=3.3
+      # Silences the Qt QStandardPaths warning; directory is created (0700) in
+      # Dockerfile.butler. Do NOT set QT_QUICK_BACKEND=software here — it
+      # segfaults the Gazebo Harmonic GUI (MinimalScene/QOpenGLContext).
+      - XDG_RUNTIME_DIR=/tmp/runtime-root
+      - UID=${UID:-1000}
+      - GID=${GID:-1000}
+      # Isolates the Harmonic stack's DDS traffic from the Classic stack
+      # (amr-ros-dev uses the default ROS_DOMAIN_ID=0). Both containers use host
+      # networking, so without this they would discover each other's nodes.
+      # Match the domain IDs only if you deliberately want cross-stack traffic.
+      - ROS_DOMAIN_ID=42
+    volumes:
+      - ../:/workspace:rw
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /mnt/wslg:/mnt/wslg:ro       # helpful on WSLg; harmless elsewhere
+    # Remove /dev/dri if running in VirtualBox without 3D acceleration
+    devices:
+      - /dev/dri:/dev/dri
+    command: bash
+
   # GPU profile — DIFFERENT name to avoid collisions
   amr-ros-dev-gpu:
     profiles: ["gpu"]

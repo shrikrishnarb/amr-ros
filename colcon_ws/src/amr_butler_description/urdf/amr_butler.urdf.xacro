@@ -1,0 +1,399 @@
+<?xml version="1.0"?>
+<!--
+  amr_butler.urdf.xacro - "butler" service robot for the Gazebo Harmonic stack.
+
+  Differential-drive base (cylindrical chassis, 2 drive wheels, 2 casters) with a
+  rear pillar carrying two serving trays and a sensor head at ~1.2 m.
+
+  Conventions (must match the rest of the repo, see CLAUDE.md):
+    - Frames prefixed with the robot namespace: <ns>/base_footprint -> <ns>/base_link
+      -> sensor links (REP-105 style; the shared global frame is `map`, un-prefixed).
+    - All gz-sim plugin/sensor topics are model-scoped (/model/<ns>/...) so several
+      robots can coexist; ros_gz_bridge (config/bridge.yaml) maps them to the
+      /<ns>/... ROS names used by the Classic stack.
+    - gz-sim system plugins only (DiffDrive, JointStatePublisher, gpu_lidar,
+      rgbd_camera). NEVER add gazebo-classic plugins here.
+
+  Known limitation: the slim pole that supports the pillar crosses the 360 deg
+  lidar plane behind the sensor, so ~10 rays return a constant ~0.35 m hit at the
+  rear. Those points fall inside the robot footprint (chassis radius 0.35 m) and
+  are ignored by Nav2 costmaps.
+-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="amr_butler">
+
+  <!-- Namespace argument (same pattern as amr_description / amr_vision) -->
+  <xacro:arg name="namespace" default="butler1"/>
+  <xacro:property name="ns" value="$(arg namespace)"/>
+
+  <!-- ======================= dimensions & masses ======================= -->
+  <!-- base_link sits at wheel-axle height; base_footprint is its ground projection -->
+  <xacro:property name="wheel_radius"    value="0.08"/>
+  <xacro:property name="wheel_width"     value="0.04"/>
+  <xacro:property name="wheel_sep"       value="0.46"/>
+  <xacro:property name="wheel_mass"      value="1.0"/>
+
+  <xacro:property name="chassis_radius"  value="0.35"/>
+  <xacro:property name="chassis_height"  value="0.15"/>
+  <!-- chassis bottom 0.04 m above ground -> center z in base_link frame -->
+  <xacro:property name="chassis_z"       value="0.035"/>
+  <xacro:property name="chassis_mass"    value="20.0"/>
+
+  <xacro:property name="caster_radius"   value="0.04"/>
+  <xacro:property name="caster_x"        value="0.26"/>
+  <xacro:property name="caster_mass"     value="0.3"/>
+
+  <!-- rear pillar: slim support pole from chassis top, then the main column -->
+  <xacro:property name="pillar_x"        value="-0.20"/>
+  <xacro:property name="pillar_sx"       value="0.15"/>
+  <xacro:property name="pillar_sy"       value="0.25"/>
+  <xacro:property name="pillar_sz"       value="0.79"/>
+  <xacro:property name="pillar_z"        value="0.665"/>
+  <xacro:property name="pillar_mass"     value="6.0"/>
+  <xacro:property name="pole_radius"     value="0.03"/>
+  <xacro:property name="pole_length"     value="0.16"/>
+  <xacro:property name="pole_z"          value="0.19"/>
+
+  <xacro:property name="tray_radius"     value="0.28"/>
+  <xacro:property name="tray_thickness"  value="0.02"/>
+  <xacro:property name="tray_x"          value="0.03"/>
+  <xacro:property name="tray_mass"       value="0.8"/>
+  <xacro:property name="tray_lower_z"    value="0.47"/>
+  <xacro:property name="tray_upper_z"    value="0.77"/>
+
+  <xacro:property name="head_sx"         value="0.20"/>
+  <xacro:property name="head_sy"         value="0.25"/>
+  <xacro:property name="head_sz"         value="0.15"/>
+  <xacro:property name="head_x"          value="-0.17"/>
+  <xacro:property name="head_z"          value="1.135"/>
+  <xacro:property name="head_mass"       value="1.5"/>
+
+  <!-- lidar center 0.25 m above ground (base_link z + wheel_radius) -->
+  <xacro:property name="lidar_radius"    value="0.045"/>
+  <xacro:property name="lidar_length"    value="0.05"/>
+  <xacro:property name="lidar_x"         value="0.18"/>
+  <xacro:property name="lidar_z"         value="0.17"/>
+  <xacro:property name="lidar_mass"      value="0.2"/>
+
+  <!-- camera ~1.2 m above ground, forward-facing, slight downward tilt -->
+  <xacro:property name="camera_x"        value="-0.055"/>
+  <xacro:property name="camera_z"        value="1.12"/>
+  <xacro:property name="camera_pitch"    value="0.15"/>
+  <xacro:property name="camera_mass"     value="0.05"/>
+
+  <!-- ======================= materials ======================= -->
+  <material name="butler_white"><color rgba="0.92 0.92 0.94 1"/></material>
+  <material name="butler_dark"><color rgba="0.15 0.15 0.18 1"/></material>
+  <material name="butler_teal"><color rgba="0.0 0.55 0.55 1"/></material>
+  <material name="butler_tray"><color rgba="0.35 0.25 0.15 1"/></material>
+  <material name="butler_black"><color rgba="0.05 0.05 0.05 1"/></material>
+
+  <!-- ======================= inertia macros ======================= -->
+  <xacro:macro name="cylinder_inertial" params="m r h ox:=0 oy:=0 oz:=0">
+    <inertial>
+      <origin xyz="${ox} ${oy} ${oz}" rpy="0 0 0"/>
+      <mass value="${m}"/>
+      <inertia ixx="${m*(3*r*r + h*h)/12.0}" ixy="0.0" ixz="0.0"
+               iyy="${m*(3*r*r + h*h)/12.0}" iyz="0.0"
+               izz="${m*r*r/2.0}"/>
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="box_inertial" params="m sx sy sz ox:=0 oy:=0 oz:=0">
+    <inertial>
+      <origin xyz="${ox} ${oy} ${oz}" rpy="0 0 0"/>
+      <mass value="${m}"/>
+      <inertia ixx="${m*(sy*sy + sz*sz)/12.0}" ixy="0.0" ixz="0.0"
+               iyy="${m*(sx*sx + sz*sz)/12.0}" iyz="0.0"
+               izz="${m*(sx*sx + sy*sy)/12.0}"/>
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="sphere_inertial" params="m r ox:=0 oy:=0 oz:=0">
+    <inertial>
+      <origin xyz="${ox} ${oy} ${oz}" rpy="0 0 0"/>
+      <mass value="${m}"/>
+      <inertia ixx="${2.0*m*r*r/5.0}" ixy="0.0" ixz="0.0"
+               iyy="${2.0*m*r*r/5.0}" iyz="0.0"
+               izz="${2.0*m*r*r/5.0}"/>
+    </inertial>
+  </xacro:macro>
+
+  <!-- ======================= base ======================= -->
+  <link name="${ns}/base_footprint"/>
+
+  <link name="${ns}/base_link">
+    <!-- chassis body -->
+    <visual>
+      <origin xyz="0 0 ${chassis_z}" rpy="0 0 0"/>
+      <geometry><cylinder radius="${chassis_radius}" length="${chassis_height}"/></geometry>
+      <material name="butler_white"/>
+    </visual>
+    <!-- teal bumper ring accent -->
+    <visual>
+      <origin xyz="0 0 ${chassis_z - chassis_height/2 + 0.015}" rpy="0 0 0"/>
+      <geometry><cylinder radius="${chassis_radius + 0.005}" length="0.03"/></geometry>
+      <material name="butler_teal"/>
+    </visual>
+    <!-- lidar mount stub -->
+    <visual>
+      <origin xyz="${lidar_x} 0 0.14" rpy="0 0 0"/>
+      <geometry><cylinder radius="0.03" length="0.06"/></geometry>
+      <material name="butler_dark"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 ${chassis_z}" rpy="0 0 0"/>
+      <geometry><cylinder radius="${chassis_radius}" length="${chassis_height}"/></geometry>
+    </collision>
+    <xacro:cylinder_inertial m="${chassis_mass}" r="${chassis_radius}"
+                             h="${chassis_height}" oz="${chassis_z}"/>
+  </link>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="${ns}/base_footprint"/>
+    <child link="${ns}/base_link"/>
+    <origin xyz="0 0 ${wheel_radius}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ======================= drive wheels ======================= -->
+  <xacro:macro name="drive_wheel" params="side y">
+    <link name="${ns}/${side}_wheel">
+      <visual>
+        <geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry>
+        <material name="butler_black"/>
+      </visual>
+      <collision>
+        <geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry>
+      </collision>
+      <xacro:cylinder_inertial m="${wheel_mass}" r="${wheel_radius}" h="${wheel_width}"/>
+    </link>
+    <joint name="${side}_wheel_joint" type="continuous">
+      <parent link="${ns}/base_link"/>
+      <child link="${ns}/${side}_wheel"/>
+      <origin xyz="0 ${y} 0" rpy="-1.5707963 0 0"/>
+      <axis xyz="0 0 1"/>
+    </joint>
+  </xacro:macro>
+  <xacro:drive_wheel side="left" y="${wheel_sep/2}"/>
+  <xacro:drive_wheel side="right" y="${-wheel_sep/2}"/>
+
+  <!-- ======================= casters ======================= -->
+  <xacro:macro name="caster" params="pos x">
+    <link name="${ns}/${pos}_caster">
+      <visual>
+        <geometry><sphere radius="${caster_radius}"/></geometry>
+        <material name="butler_dark"/>
+      </visual>
+      <collision>
+        <geometry><sphere radius="${caster_radius}"/></geometry>
+      </collision>
+      <xacro:sphere_inertial m="${caster_mass}" r="${caster_radius}"/>
+    </link>
+    <joint name="${pos}_caster_joint" type="fixed">
+      <parent link="${ns}/base_link"/>
+      <child link="${ns}/${pos}_caster"/>
+      <origin xyz="${x} 0 ${caster_radius - wheel_radius}" rpy="0 0 0"/>
+    </joint>
+    <gazebo reference="${ns}/${pos}_caster">
+      <mu1>0.001</mu1>
+      <mu2>0.001</mu2>
+    </gazebo>
+  </xacro:macro>
+  <xacro:caster pos="front" x="${caster_x}"/>
+  <xacro:caster pos="rear" x="${-caster_x}"/>
+
+  <!-- ======================= pillar + trays + head ======================= -->
+  <link name="${ns}/pillar">
+    <!-- support pole from chassis top to column bottom -->
+    <visual>
+      <origin xyz="0 0 ${pole_z - pillar_z}" rpy="0 0 0"/>
+      <geometry><cylinder radius="${pole_radius}" length="${pole_length}"/></geometry>
+      <material name="butler_dark"/>
+    </visual>
+    <!-- main column -->
+    <visual>
+      <geometry><box size="${pillar_sx} ${pillar_sy} ${pillar_sz}"/></geometry>
+      <material name="butler_white"/>
+    </visual>
+    <collision>
+      <geometry><box size="${pillar_sx} ${pillar_sy} ${pillar_sz}"/></geometry>
+    </collision>
+    <xacro:box_inertial m="${pillar_mass}" sx="${pillar_sx}" sy="${pillar_sy}"
+                        sz="${pillar_sz}"/>
+  </link>
+  <joint name="pillar_joint" type="fixed">
+    <parent link="${ns}/base_link"/>
+    <child link="${ns}/pillar"/>
+    <origin xyz="${pillar_x} 0 ${pillar_z}" rpy="0 0 0"/>
+  </joint>
+
+  <xacro:macro name="tray" params="pos z">
+    <link name="${ns}/${pos}_tray">
+      <visual>
+        <geometry><cylinder radius="${tray_radius}" length="${tray_thickness}"/></geometry>
+        <material name="butler_tray"/>
+      </visual>
+      <!-- raised lip so items look held in place -->
+      <visual>
+        <origin xyz="0 0 ${tray_thickness}" rpy="0 0 0"/>
+        <geometry><cylinder radius="${tray_radius}" length="0.005"/></geometry>
+        <material name="butler_teal"/>
+      </visual>
+      <collision>
+        <geometry><cylinder radius="${tray_radius}" length="${tray_thickness}"/></geometry>
+      </collision>
+      <xacro:cylinder_inertial m="${tray_mass}" r="${tray_radius}" h="${tray_thickness}"/>
+    </link>
+    <joint name="${pos}_tray_joint" type="fixed">
+      <parent link="${ns}/base_link"/>
+      <child link="${ns}/${pos}_tray"/>
+      <origin xyz="${tray_x} 0 ${z}" rpy="0 0 0"/>
+    </joint>
+  </xacro:macro>
+  <xacro:tray pos="lower" z="${tray_lower_z}"/>
+  <xacro:tray pos="upper" z="${tray_upper_z}"/>
+
+  <link name="${ns}/head">
+    <visual>
+      <geometry><box size="${head_sx} ${head_sy} ${head_sz}"/></geometry>
+      <material name="butler_dark"/>
+    </visual>
+    <!-- "face" panel accent -->
+    <visual>
+      <origin xyz="${head_sx/2 + 0.002} 0 0" rpy="0 0 0"/>
+      <geometry><box size="0.004 0.18 0.10"/></geometry>
+      <material name="butler_teal"/>
+    </visual>
+    <collision>
+      <geometry><box size="${head_sx} ${head_sy} ${head_sz}"/></geometry>
+    </collision>
+    <xacro:box_inertial m="${head_mass}" sx="${head_sx}" sy="${head_sy}" sz="${head_sz}"/>
+  </link>
+  <joint name="head_joint" type="fixed">
+    <parent link="${ns}/base_link"/>
+    <child link="${ns}/head"/>
+    <origin xyz="${head_x} 0 ${head_z}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ======================= lidar ======================= -->
+  <link name="${ns}/lidar_link">
+    <visual>
+      <geometry><cylinder radius="${lidar_radius}" length="${lidar_length}"/></geometry>
+      <material name="butler_black"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="${lidar_radius}" length="${lidar_length}"/></geometry>
+    </collision>
+    <xacro:cylinder_inertial m="${lidar_mass}" r="${lidar_radius}" h="${lidar_length}"/>
+  </link>
+  <joint name="lidar_joint" type="fixed">
+    <parent link="${ns}/base_link"/>
+    <child link="${ns}/lidar_link"/>
+    <origin xyz="${lidar_x} 0 ${lidar_z}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ======================= camera ======================= -->
+  <link name="${ns}/camera_link">
+    <visual>
+      <geometry><box size="0.03 0.08 0.03"/></geometry>
+      <material name="butler_black"/>
+    </visual>
+    <xacro:box_inertial m="${camera_mass}" sx="0.03" sy="0.08" sz="0.03"/>
+  </link>
+  <joint name="camera_joint" type="fixed">
+    <parent link="${ns}/base_link"/>
+    <child link="${ns}/camera_link"/>
+    <origin xyz="${camera_x} 0 ${camera_z}" rpy="0 ${camera_pitch} 0"/>
+  </joint>
+
+  <!-- optical frame (z forward -> REP-103 optical convention); gz camera data
+       is expressed in this frame -->
+  <link name="${ns}/camera_link_optical"/>
+  <joint name="camera_optical_joint" type="fixed">
+    <parent link="${ns}/camera_link"/>
+    <child link="${ns}/camera_link_optical"/>
+    <origin xyz="0 0 0" rpy="-1.5707963 0 -1.5707963"/>
+  </joint>
+
+  <!-- ======================= gz-sim sensors ======================= -->
+  <gazebo reference="${ns}/lidar_link">
+    <sensor name="lidar" type="gpu_lidar">
+      <topic>/model/${ns}/scan</topic>
+      <gz_frame_id>${ns}/lidar_link</gz_frame_id>
+      <update_rate>10</update_rate>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <lidar>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1</resolution>
+            <min_angle>-3.14159</min_angle>
+            <max_angle>3.14159</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.12</min>
+          <max>8.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </lidar>
+    </sensor>
+  </gazebo>
+
+  <gazebo reference="${ns}/camera_link">
+    <sensor name="rgbd_camera" type="rgbd_camera">
+      <topic>/model/${ns}/camera</topic>
+      <gz_frame_id>${ns}/camera_link_optical</gz_frame_id>
+      <update_rate>10</update_rate>
+      <always_on>true</always_on>
+      <camera>
+        <horizontal_fov>1.0472</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+        </image>
+        <clip>
+          <near>0.05</near>
+          <far>8.0</far>
+        </clip>
+        <depth_camera>
+          <clip>
+            <near>0.1</near>
+            <far>8.0</far>
+          </clip>
+        </depth_camera>
+      </camera>
+    </sensor>
+  </gazebo>
+
+  <!-- ======================= gz-sim system plugins ======================= -->
+  <gazebo>
+    <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
+      <left_joint>left_wheel_joint</left_joint>
+      <right_joint>right_wheel_joint</right_joint>
+      <wheel_separation>${wheel_sep}</wheel_separation>
+      <wheel_radius>${wheel_radius}</wheel_radius>
+      <topic>/model/${ns}/cmd_vel</topic>
+      <odom_topic>/model/${ns}/odometry</odom_topic>
+      <tf_topic>/model/${ns}/tf</tf_topic>
+      <frame_id>${ns}/odom</frame_id>
+      <child_frame_id>${ns}/base_footprint</child_frame_id>
+      <odom_publish_frequency>30</odom_publish_frequency>
+      <max_linear_velocity>1.0</max_linear_velocity>
+      <min_linear_velocity>-0.5</min_linear_velocity>
+      <max_angular_velocity>2.0</max_angular_velocity>
+      <max_linear_acceleration>1.0</max_linear_acceleration>
+      <max_angular_acceleration>2.0</max_angular_acceleration>
+    </plugin>
+    <plugin filename="gz-sim-joint-state-publisher-system"
+            name="gz::sim::systems::JointStatePublisher">
+      <topic>/model/${ns}/joint_states</topic>
+    </plugin>
+  </gazebo>
+
+</robot>

@@ -1,0 +1,102 @@
+# docker/Dockerfile.butler — Gazebo Harmonic (gz-sim 8) development container
+#
+# Companion image to docker/Dockerfile (Gazebo Classic). The two stacks conflict
+# at the apt level (ros-humble-ros-gzharmonic vs ros-humble-gazebo-ros-pkgs), so
+# they live in separate images/containers that share the same /workspace volume.
+# See CLAUDE.md "Gazebo Classic vs Harmonic" for the stack decision.
+FROM ros:humble-ros-base-jammy
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Software-rendering defaults for VM / weak-GPU users (mirrors the Classic image).
+# Verified on VirtualBox without a GPU: the default ogre2 engine works correctly
+# (shadows included) with LIBGL_ALWAYS_SOFTWARE=1. `gz sim --render-engine ogre`
+# also works but is only a fallback. Do NOT set QT_QUICK_BACKEND=software
+# anywhere (image, compose, entrypoint) — it segfaults the Gazebo GUI in
+# MinimalScene/QOpenGLContext.
+ENV LIBGL_ALWAYS_SOFTWARE=1
+ENV MESA_GL_VERSION_OVERRIDE=3.3
+ENV DISPLAY=:0
+
+# ---- osrfoundation apt repo ----
+# Provides both gz-harmonic and the NON-official ros-humble-ros-gzharmonic bridge
+# packages (ros_gz built against Harmonic). Do NOT use ros-humble-ros-gz from the
+# regular ROS repo — on Humble that binary targets Gazebo Fortress.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl gnupg lsb-release ca-certificates \
+ && curl -sSL https://packages.osrfoundation.org/gazebo.gpg \
+      -o /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg \
+ && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" \
+      > /etc/apt/sources.list.d/gazebo-stable.list \
+ && rm -rf /var/lib/apt/lists/*
+
+# ---- ROS 2 desktop + Gazebo Harmonic + Harmonic ros_gz + nav / dev tools ----
+# IMPORTANT: never install gazebo / ros-humble-gazebo-ros-pkgs (Gazebo Classic)
+# in this image — that is the amr-ros-dev container's stack and the packages
+# conflict with ros-humble-ros-gzharmonic.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    bash-completion build-essential cmake git wget xterm \
+    python3-pip python3-vcstool python3-rosdep python3-colcon-common-extensions \
+    ros-dev-tools \
+    ros-humble-desktop \
+    gz-harmonic \
+    ros-humble-ros-gzharmonic \
+    ros-humble-navigation2 \
+    ros-humble-nav2-bringup \
+    ros-humble-nav2-simple-commander \
+    ros-humble-slam-toolbox \
+    ros-humble-rviz2 \
+    ros-humble-xacro \
+    ros-humble-robot-state-publisher \
+    ros-humble-joint-state-publisher \
+    ros-humble-teleop-twist-keyboard \
+    libgl1-mesa-glx libx11-6 libxext6 \
+ && rm -rf /var/lib/apt/lists/*
+
+# ---- Python deps for the upcoming amr_concierge LLM client (keep minimal) ----
+RUN pip3 install --no-cache-dir requests pyyaml pillow
+
+# ---- Guard: fail the build if Gazebo Classic ever sneaks in transitively ----
+RUN if dpkg -l | grep -E '^ii +(gazebo11|libgazebo11|ros-humble-gazebo-)' ; then \
+      echo 'ERROR: Gazebo Classic packages detected in the Harmonic image' && exit 1 ; \
+    fi
+
+# ---- Create non-root user (same as the Classic image) ----
+ARG USERNAME=developer
+ARG USER_UID=1000
+ARG USER_GID=1000
+RUN groupadd --gid $USER_GID $USERNAME \
+ && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+ && echo "$USERNAME ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/$USERNAME \
+ && chmod 0440 /etc/sudoers.d/$USERNAME
+
+# Runtime dir for Qt (XDG_RUNTIME_DIR points here, set in the compose service);
+# 0700 is required or Qt still warns about incorrect permissions.
+RUN mkdir -p /tmp/runtime-root && chmod 0700 /tmp/runtime-root
+
+# Source ROS (and the workspace overlay if built) in interactive shells too:
+# `docker exec ... bash` does not go through the entrypoint, so without this
+# ros2/gz are not on PATH in exec'd shells.
+RUN for rc in /root/.bashrc /home/$USERNAME/.bashrc; do \
+      echo 'source /opt/ros/humble/setup.bash' >> "$rc" \
+   && echo '[ -f /workspace/colcon_ws/install/setup.bash ] && source /workspace/colcon_ws/install/setup.bash' >> "$rc" ; \
+    done
+
+# Workspace (mounted later; shared with amr-ros-dev)
+WORKDIR /workspace/colcon_ws
+RUN mkdir -p src
+
+# Entry point — same script as the Classic image: sources ROS, then
+# /workspace/colcon_ws/install/setup.bash if present.
+COPY docker/ros_entrypoint.sh /ros_entrypoint.sh
+RUN chmod +x /ros_entrypoint.sh
+
+# ---- Verify the Harmonic stack installed correctly ----
+RUN bash -c "source /opt/ros/humble/setup.bash \
+ && gz sim --versions \
+ && ros2 pkg list | grep -q ros_gz_bridge && echo 'ros_gz_bridge OK' \
+ && ros2 pkg list | grep -q ros_gz_sim && echo 'ros_gz_sim OK' \
+ && python3 -c 'import requests, yaml, PIL; print(\"python deps OK\")'"
+
+ENTRYPOINT ["/ros_entrypoint.sh"]
+CMD ["bash"]

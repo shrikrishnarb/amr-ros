@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>amr_butler_description</name>
+  <version>0.1.0</version>
+  <description>Butler service robot model for the Gazebo Harmonic (gz-sim 8) stack</description>
+  <maintainer email="shrikrishnarb@gmail.com">shrikrishnarb</maintainer>
+  <license>MIT</license>
+
+  <!-- Gazebo Harmonic stack ONLY: never add gazebo_ros / gazebo-classic
+       dependencies here (see CLAUDE.md "Gazebo Classic vs Harmonic").
+       ros_gz packages come from the non-official ros-humble-ros-gzharmonic
+       binaries installed in the amr-butler-dev container. -->
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>ros_gz_sim</exec_depend>
+  <exec_depend>ros_gz_bridge</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <buildtool_depend>ament_python</buildtool_depend>
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

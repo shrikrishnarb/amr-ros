@@ -1,0 +1,77 @@
+# ros_gz_bridge topic mapping for one butler robot.
+#
+# TEMPLATE: `{NS}` is substituted with the robot namespace by
+# launch/butler_sim.launch.py (same pattern as the `{NS}` placeholders in
+# amr_description/yaml/nav2_params_amr.yaml) and written to a temp file that is
+# passed to `parameter_bridge` via the `config_file` parameter.
+#
+# gz-side names are model-scoped (/model/{NS}/...) — they are set explicitly in
+# urdf/amr_butler.urdf.xacro. ROS-side names follow the /<ns>/... contract used
+# by the Classic stack (see CLAUDE.md / docs/concierge_architecture.md); this
+# file is the ONLY place gz topic names may appear.
+
+# --- sim time: bridge ONCE per simulation, not per robot. When launching more
+#     than one robot, pass bridge_clock:=false to every launch after the first
+#     (the launch file drops this entry from the substituted config).
+- ros_topic_name: "/clock"
+  gz_topic_name: "/clock"
+  ros_type_name: "rosgraph_msgs/msg/Clock"
+  gz_type_name: "gz.msgs.Clock"
+  direction: GZ_TO_ROS
+
+# --- diff-drive actuation + odometry
+- ros_topic_name: "/{NS}/cmd_vel"
+  gz_topic_name: "/model/{NS}/cmd_vel"
+  ros_type_name: "geometry_msgs/msg/Twist"
+  gz_type_name: "gz.msgs.Twist"
+  direction: ROS_TO_GZ
+
+- ros_topic_name: "/{NS}/odom"
+  gz_topic_name: "/model/{NS}/odometry"
+  ros_type_name: "nav_msgs/msg/Odometry"
+  gz_type_name: "gz.msgs.Odometry"
+  direction: GZ_TO_ROS
+
+# DiffDrive odom->base_footprint transform. Published to the GLOBAL /tf, matching
+# the repo convention (robot_state_publisher also publishes global /tf; tf_relay
+# fans it out to /<ns>/tf when Nav2 is added). Frame names inside the messages
+# are already namespace-prefixed by the xacro.
+- ros_topic_name: "/tf"
+  gz_topic_name: "/model/{NS}/tf"
+  ros_type_name: "tf2_msgs/msg/TFMessage"
+  gz_type_name: "gz.msgs.Pose_V"
+  direction: GZ_TO_ROS
+
+# --- wheel joint states (consumed by robot_state_publisher under /<ns>/)
+- ros_topic_name: "/{NS}/joint_states"
+  gz_topic_name: "/model/{NS}/joint_states"
+  ros_type_name: "sensor_msgs/msg/JointState"
+  gz_type_name: "gz.msgs.Model"
+  direction: GZ_TO_ROS
+
+# --- 2D lidar
+- ros_topic_name: "/{NS}/scan"
+  gz_topic_name: "/model/{NS}/scan"
+  ros_type_name: "sensor_msgs/msg/LaserScan"
+  gz_type_name: "gz.msgs.LaserScan"
+  direction: GZ_TO_ROS
+
+# --- RGB-D camera (rgbd_camera sensor publishes image / depth_image /
+#     camera_info under its /model/{NS}/camera topic prefix)
+- ros_topic_name: "/{NS}/camera/image_raw"
+  gz_topic_name: "/model/{NS}/camera/image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "/{NS}/camera/depth/image_raw"
+  gz_topic_name: "/model/{NS}/camera/depth_image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "/{NS}/camera/camera_info"
+  gz_topic_name: "/model/{NS}/camera/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS

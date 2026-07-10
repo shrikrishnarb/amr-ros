@@ -34,6 +34,7 @@ __pycache__/
 
 # Claude Code internal data
 .claude/
+CLAUDE.md
 
 # Editor noise
 *~
